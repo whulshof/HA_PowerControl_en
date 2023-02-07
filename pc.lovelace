@@ -13,334 +13,328 @@
         cards:
           - type: history-graph
             entities:
-              - entity: sensor.potenza_massima_ritardato
-                name: Massima
-              - entity: sensor.potenza_carichi_selezionato
-                name: In uso
-              - entity: sensor.potenza_carichi_sospesa
-                name: In attesa
+              - entity: sensor.delayed_maximum_power
+                name: Maximum
+              - entity: sensor.selected_power_loads
+                name: In use
+              - entity: sensor.suspended_power_loads
+                name: Waiting
             refresh_interval: 0
-            title: Grafico Potenza
+            title: Power Graph
             hours_to_show: 2
           - type: entities
             entities:
-              - entity: input_boolean.attiva_power_control
+              - entity: input_boolean.active_power_control
                 icon: hass:car-cruise-control
-              - entity: input_boolean.impostazioni_power_control
+              - entity: input_boolean.power_control_settings
                 icon: hass:car-cruise-control
-              - entity: sensor.potenza_carichi_selezionato
-                name: Potenza in uso
+              - entity: sensor.selected_power_loads
+                name: Used Power
                 icon: hass:power-plug
-              - entity: sensor.potenza_carichi_sospesa
-                name: Potenza in attesa
+              - entity: sensor.suspended_power_loads
+                name: Waiting Power
                 icon: hass:power-plug-off
             state_color: true
             show_header_toggle: false
           - type: conditional
             conditions:
-              - entity: input_boolean.impostazioni_power_control
+              - entity: input_boolean.power_control_settings
                 state: 'on'
             card:
               type: markdown
               content: >
-                Questa è la configurazione attualmente utilizzata, modificabile
-                tramite i menu a discesa seguenti.
+                This is the configuration currently used, editable
+                via the following drop-down menus.
 
 
-                **Sensore rilevamento potenza**:
-                {{states('input_text.potenza_carichi')}}
+                **Power Detection Sensor**:
+                {{states('input_text.power_loads')}}
 
 
-                **Carico 1**: 
+                **Load 1**:
 
-                **Potenza**: {{states('input_text.carico_1_potenza')}}
+                **Power**: {{states('input_text.power_load_1')}}
 
-                **Interruttore**: {{states('input_text.carico_1_switch')}} 
+                **Switch**: {{states('input_text.load_1_switch')}}
 
-                **Carico 2**: 
+                **Load 2**:
 
-                **Potenza**: {{states('input_text.carico_2_potenza')}}
+                **Power**: {{states('input_text.power_load_2')}}
 
-                **Interruttore**: {{states('input_text.carico_2_switch')}} 
+                **Switch**: {{states('input_text.load_2_switch')}}
 
-                **Carico 3**: 
+                **Load 3**:
 
-                **Potenza**: {{states('input_text.carico_3_potenza')}}
+                **Power**: {{states('input_text.power_load_3')}}
 
-                **Interruttore**: {{states('input_text.carico_3_switch')}} 
+                **Switch**: {{states('input_text.load_3_switch')}}
 
-                **Carico 4**: 
+                **Load 4**:
 
-                **Potenza**: {{states('input_text.carico_4_potenza')}}
+                **Power**: {{states('input_text.power_load_4')}}
 
-                **Interruttore**: {{states('input_text.carico_4_switch')}} 
+                **Switch**: {{states('input_text.load_4_switch')}}
 
-                **Carico 5**: 
+                **Load 5**:
 
-                **Potenza**: {{states('input_text.carico_5_potenza')}}
+                **Power**: {{states('input_text.power_load_5')}}
 
-                **Interruttore**: {{states('input_text.carico_5_switch')}} 
+                **Switch**: {{states('input_text.load_5_switch')}}
 
-                **Carico 6**: 
+                **Load 6**:
 
-                **Potenza**: {{states('input_text.carico_6_potenza')}}
+                **Power**: {{states('input_text.power_load_6')}}
 
-                **Interruttore**: {{states('input_text.carico_6_switch')}} 
+                **Switch**: {{states('input_text.load_6_switch')}}
 
-                **Carico 7**: 
+                **Load 7**:
 
-                **Potenza**: {{states('input_text.carico_7_potenza')}}
+                **Power**: {{states('input_text.power_load_7')}}
 
-                **Interruttore**: {{states('input_text.carico_7_switch')}} 
+                **Switch**: {{states('input_text.load_7_switch')}}
 
-                **Carico 8**: 
+                **Load 8**:
 
-                **Potenza**: {{states('input_text.carico_8_potenza')}}
+                **Power**: {{states('input_text.power_load_8')}}
 
-                **Interruttore**: {{states('input_text.carico_8_switch')}} 
+                **Switch**: {{states('input_text.load_8_switch')}}
 
-                **Carico 9**: 
+                **Load 9**:
 
-                **Potenza**: {{states('input_text.carico_9_potenza')}}
+                **Power**: {{states('input_text.power_load_9')}}
 
-                **Interruttore**: {{states('input_text.carico_9_switch')}} 
+                **Switch**: {{states('input_text.load_9_switch')}}
 
-                **Carico 10**: 
+                **Load 10**:
 
-                **Potenza**: {{states('input_text.carico_10_potenza')}}
+                **Power**: {{states('input_text.power_load_10')}}
 
-                **Interruttore**: {{states('input_text.carico_10_switch')}} 
+                **Switch**: {{states('input_text.load_10_switch')}}
 
-                **Carico 11**: 
+                **Load 11**:
 
-                **Potenza**: {{states('input_text.carico_11_potenza')}}
+                **Power**: {{states('input_text.power_load_11')}}
 
-                **Interruttore**: {{states('input_text.carico_11_switch')}} 
+                **Switch**: {{states('input_text.load_11_switch')}}
 
-                **Carico 12**: 
+                **Load 12**:
 
-                **Potenza**: {{states('input_text.carico_12_potenza')}}
+                **Power**: {{states('input_text.power_load_12')}}
 
-                **Interruttore**: {{states('input_text.carico_12_switch')}} 
+                **Switch**: {{states('input_text.load_12_switch')}}
 
-                **Carico 13**: 
+                **Load 13**:
 
-                **Potenza**: {{states('input_text.carico_13_potenza')}}
+                **Power**: {{states('input_text.power_load_13')}}
 
-                **Interruttore**: {{states('input_text.carico_13_switch')}} 
+                **Switch**: {{states('input_text.load_13_switch')}}
 
-                **Carico 14**: 
+                **Load 14**:
 
-                **Potenza**: {{states('input_text.carico_14_potenza')}}
+                **Power**: {{states('input_text.power_load_14')}}
 
-                **Interruttore**: {{states('input_text.carico_14_switch')}} 
+                **Switch**: {{states('input_text.load_14_switch')}}
 
-                **Carico 15**: 
+                **Load 15**:
 
-                **Potenza**: {{states('input_text.carico_15_potenza')}}
+                **Power**: {{states('input_text.power_load_15')}}
 
-                **Interruttore**: {{states('input_text.carico_15_switch')}} 
+                **Switch**: {{states('input_text.load_15_switch')}}
 
-                **Carico 16**: 
+                **Load 16**:
 
-                **Potenza**: {{states('input_text.carico_16_potenza')}}
+                **Power**: {{states('input_text.power_load_16')}}
 
-                **Interruttore**: {{states('input_text.carico_16_switch')}} 
+                **Switch**: {{states('input_text.load_16_switch')}}
 
-                **Carico 17**: 
+                **Load 17**:
 
-                **Potenza**: {{states('input_text.carico_17_potenza')}}
+                **Power**: {{states('input_text.power_load_17')}}
 
-                **Interruttore**: {{states('input_text.carico_17_switch')}} 
+                **Switch**: {{states('input_text.load_17_switch')}}
 
-                **Carico 18**: 
+                **Load 18**:
 
-                **Potenza**: {{states('input_text.carico_18_potenza')}}
+                **Power**: {{states('input_text.power_load_18')}}
 
-                **Interruttore**: {{states('input_text.carico_18_switch')}} 
+                **Switch**: {{states('input_text.load_18_switch')}}
 
-                **Carico 19**: 
+                **Load 19**:
 
-                **Potenza**: {{states('input_text.carico_19_potenza')}}
+                **Power**: {{states('input_text.power_load_19')}}
 
-                **Interruttore**: {{states('input_text.carico_19_switch')}} 
+                **Switch**: {{states('input_text.load_19_switch')}}
 
-                **Carico 20**: 
+                **Load 20**:
 
-                **Potenza**: {{states('input_text.carico_20_potenza')}}
+                **Power**: {{states('input_text.power_load_20')}}
 
-                **Interruttore**: {{states('input_text.carico_20_switch')}} 
-              title: Configurazione Salvata
+                **Switch**: {{states('input_text.load_20_switch')}}
+              title: Saved Configuration
       - type: conditional
         conditions:
-          - entity: input_boolean.impostazioni_power_control
+          - entity: input_boolean.power_control_settings
             state: 'on'
         card:
           type: vertical-stack
           cards:
             - type: markdown
               content: >
-                **Sensore potenza carichi**
+                **Power Load Sensors**
 
-                Selezionare il sensore del consumo istantaneo globale. Se non
-                disponibile, è possibile selezionare il sensore
-                "sensor.potenza_carichi_virtuale" che è la somma della potenza
-                utilizzata dai carichi inseriti nei campi sottostanti.
-
-
-                **Potenza Massima Ritardato**
-
-                Se l'assorbimento totale supera questa soglia, il sistema
-                attende alcuni MINUTI (vedi opzione seguente) poi inizia a
-                staccare i carichi. (suggerito 3200)
+                Select the global instantaneous consumption sensor. Unless
+                available, you can select the sensor
+                "sensor.virtual_power_load" which is the sum of the power
+                used by loads entered in the fields below.
 
 
-                **Minuti distacco ritardato**
+                **Delayed Maximum Power**
 
-                Dopo tot MINUTI di superamento della potenza massima RITARDATO,
-                inizia il distacco. (suggerito 170)
-
-
-                **Potenza Massima Immediato**
-
-                Se l'assorbimento totale supera questa soglia, il sistema
-                attende alcuni SECONDI (vedi opzione seguente) poi inizia a
-                staccare i carichi. (suggerito 3900)
+                If the total absorption exceeds this threshold, the system wait a few MINUTES
+                (see option below) then start Detach loads. (suggested 3200)
 
 
-                **Secondi distacco immediato**
+                **Delayed posting minutes**
 
-                Dopo tot SECONDI di superamento della potenza massima IMMEDIATO,
-                inizia il distacco. (suggerito 10)
-
-
-                **Minuti riattivazione**
-
-                Dopo tot MINUTI che la potenza utilizzata è rientrata nei
-                limiti, inizia a riattivare i carichi. (suggerito 5)
+                After so many MINUTES of exceeding the maximum DELAYED power,
+                The detachment begins. (suggested 170)
 
 
-                **Secondi tra gli Stop**
+                **Immediate Maximum Power**
 
-                Attende tot SECONDI tra un distacco e l'altro. (suggerito 20)
-
-
-                **Minuti tra gli Start**
-
-                Attende tot MINUTI tra una riattivazione e l'altra per dare il
-                tempo al carico di riprendere il suo normale assorbimento.
-                (suggerito 5)
+                If the total absorption exceeds this threshold, the system
+                wait a few SECONDS (see option below) then starts detaching loads. (suggested 3900)
 
 
-                **Nuova modalità selezione**
+                **Second immediate detachment**
 
-                Attivando questa opzione, le entità dei carichi verranno
-                filtrate e saranno visibili solo quelle che iniziano con
-                "sensor.potenza" e "swtich.interruttore".
-              title: Configurazione
+                After so many SECONDS of exceeding the maximum IMMEDIATE power,
+                detaching begins. (suggested 10)
+
+
+                **Reactivation minutes**
+
+                After so many MINUTES that the power used has returned to the limits,
+                start reactivating loads. (suggested 5)
+
+
+                **Seconds between Stops**
+
+                Wait a few SECONDS between one detachment and another. (suggested 20)
+
+                **Minutes between Starts**
+
+                Wait a few MINUTES between one reactivation and another to give the
+                time to the load to resume its normal absorption. (suggested 5)
+
+                **New Selection Mode**
+
+                By enabling this option, the load entities will be filtered and only
+                those that begin with "sensor.power" and "switch.switch".
+
+              title: Configuration
             - type: entities
               entities:
-                - entity: input_select.potenza_carichi
+                - entity: input_select.power_loads
                   icon: hass:chart-line
-                - entity: input_number.potenza_massima_ritardato
-                  name: Potenza Massima Ritardato
+                - entity: input_number.delayed_maximum_power
+                  name: Delayed Maximum Power
                   icon: hass:chart-bell-curve
-                - entity: input_number.tempo_stop_ritardato
-                  name: Minuti distacco ritardato
+                - entity: input_number.delayed_stop_pace
+                  name: Delayed posting minutes
                   icon: hass:camera-timer
-                - entity: input_number.potenza_massima_immediato
-                  name: Potenza Massima Immediato
+                - entity: input_number.immediate_maximum_power
+                  name: Immediate Maximum Power
                   icon: hass:chart-bell-curve
-                - entity: input_number.tempo_stop_immediato
-                  name: Secondi distacco immediato
+                - entity: input_number.immediate_stop_pace
+                  name: Second immediate detachment
                   icon: hass:camera-timer
-                - entity: input_number.tempo_start
-                  name: Minuti riattivazione
+                - entity: input_number.restart_delay
+                  name: Reactivation minutes
                   icon: hass:camera-timer
-                - entity: input_number.attesa_stop
-                  name: Secondi tra gli stop
+                - entity: input_number.pause_between_detachments
+                  name: Seconds between stops
                   icon: hass:camera-timer
-                - entity: input_number.attesa_start
-                  name: Minuti tra gli start
+                - entity: input_number.pause_between_reactivations
+                  name: Minutes between starts
                   icon: hass:camera-timer
-                - entity: input_boolean.selezione_script_python
-                  name: Nuova modalità selezione opzioni
+                - entity: input_boolean.selection_python_script
+                  name: New option selection mode
               state_color: true
               show_header_toggle: false
       - type: conditional
         conditions:
-          - entity: input_boolean.impostazioni_power_control
+          - entity: input_boolean.power_control_settings
             state: 'on'
         card:
           type: vertical-stack
           cards:
             - type: markdown
               content: >-
-                **Sensore Carichi**
+                **Load Sensor**
 
-                Selezionare i sensori di potenza (W) dei carichi da monitorare e
-                scollegare in caso di eccessiva richiesta.
+                Select the power sensors (W) of the loads to be monitored,
+                and to be disconnected in case of excessive demand.
             - type: entities
               entities:
-                - entity: input_select.carico_1_potenza
-                - entity: input_select.carico_2_potenza
-                - entity: input_select.carico_3_potenza
-                - entity: input_select.carico_4_potenza
-                - entity: input_select.carico_5_potenza
-                - entity: input_select.carico_6_potenza
-                - entity: input_select.carico_7_potenza
-                - entity: input_select.carico_8_potenza
-                - entity: input_select.carico_9_potenza
-                - entity: input_select.carico_10_potenza
-                - entity: input_select.carico_11_potenza
-                - entity: input_select.carico_12_potenza
-                - entity: input_select.carico_13_potenza
-                - entity: input_select.carico_14_potenza
-                - entity: input_select.carico_15_potenza
-                - entity: input_select.carico_16_potenza
-                - entity: input_select.carico_17_potenza
-                - entity: input_select.carico_18_potenza
-                - entity: input_select.carico_19_potenza
-                - entity: input_select.carico_20_potenza
-              title: Sensori potenza carichi
+                - entity: input_select.power_load_1
+                - entity: input_select.power_load_2
+                - entity: input_select.power_load_3
+                - entity: input_select.power_load_4
+                - entity: input_select.power_load_5
+                - entity: input_select.power_load_6
+                - entity: input_select.power_load_7
+                - entity: input_select.power_load_8
+                - entity: input_select.power_load_9
+                - entity: input_select.power_load_10
+                - entity: input_select.power_load_11
+                - entity: input_select.power_load_12
+                - entity: input_select.power_load_13
+                - entity: input_select.power_load_14
+                - entity: input_select.power_load_15
+                - entity: input_select.power_load_16
+                - entity: input_select.power_load_17
+                - entity: input_select.power_load_18
+                - entity: input_select.power_load_19
+                - entity: input_select.power_load_20
+              title: Power Load Sensors
       - type: conditional
         conditions:
-          - entity: input_boolean.impostazioni_power_control
+          - entity: input_boolean.power_control_settings
             state: 'on'
         card:
           type: vertical-stack
           cards:
             - type: markdown
               content: >-
-                **Interruttori Carichi**
+                **Load Switches**
 
-                Selezionare gli switch relativi ai carichi monitorati nel
-                corrispettivo sensore. I carichi verrrano scollegati in ordine
-                di priorità inversa, **a partire dal Carico 20** fino al Carico
-                1, solo se la potenza che sono in uso. Dopo che la richiesta di
-                potenza rientra nei limiti, i carichi scollegati in precedenza,
-                verranno progressivamente ricollegati **a partire dal Carico 1**
-                fino al Carico 30.
+                Select the monitored load switches in the Sensor fee.
+                Loads will be disconnected in order reverse priority,
+                **from Load 20** to Load 1, only if the power they are in use.
+                After the request for power is within limits,
+                previously disconnected loads, will be progressively reconnected
+                **starting from Load 1** up to Load 30.
             - type: entities
               entities:
-                - entity: input_select.carico_1_switch
-                - entity: input_select.carico_2_switch
-                - entity: input_select.carico_3_switch
-                - entity: input_select.carico_4_switch
-                - entity: input_select.carico_5_switch
-                - entity: input_select.carico_6_switch
-                - entity: input_select.carico_7_switch
-                - entity: input_select.carico_8_switch
-                - entity: input_select.carico_9_switch
-                - entity: input_select.carico_10_switch
-                - entity: input_select.carico_11_switch
-                - entity: input_select.carico_12_switch
-                - entity: input_select.carico_13_switch
-                - entity: input_select.carico_14_switch
-                - entity: input_select.carico_15_switch
-                - entity: input_select.carico_16_switch
-                - entity: input_select.carico_17_switch
-                - entity: input_select.carico_18_switch
-                - entity: input_select.carico_19_switch
-                - entity: input_select.carico_20_switch
-              title: Interruttori Carichi
+                - entity: input_select.load_1_switch
+                - entity: input_select.load_2_switch
+                - entity: input_select.load_3_switch
+                - entity: input_select.load_4_switch
+                - entity: input_select.load_5_switch
+                - entity: input_select.load_6_switch
+                - entity: input_select.load_7_switch
+                - entity: input_select.load_8_switch
+                - entity: input_select.load_9_switch
+                - entity: input_select.load_10_switch
+                - entity: input_select.load_11_switch
+                - entity: input_select.load_12_switch
+                - entity: input_select.load_13_switch
+                - entity: input_select.load_14_switch
+                - entity: input_select.load_15_switch
+                - entity: input_select.load_16_switch
+                - entity: input_select.load_17_switch
+                - entity: input_select.load_18_switch
+                - entity: input_select.load_19_switch
+                - entity: input_select.load_20_switch
+              title: Load Switches

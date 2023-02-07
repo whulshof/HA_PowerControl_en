@@ -1,48 +1,51 @@
 # HA_PowerControl
-Il package seguente, unito allo script python "update_entities.py" mira ad evitare il distacco del contatore a causa della troppa potenza assorbita dai vari elettrodomestici (carichi).
-Requisito hardware fondamentale è la presenza di switch sui carichi da controllare e di un sensore che misura la potenza dei singoli carichi. 
-Ho utilizzato dispositivi Shelly 1PM e Shelly Plug S, perfetti per lo scopo.
-E' consigliato, ma non tassativo, l'utilizzo di un sensore che monitori il consumo complessivo dell'impianto (es. Shelly EM o un ESP8266+PZEM).
-La logica prevede la configurazione di due soglie di potenza massima e due tempistiche di intervento (che rispecchiano la logica di funzionamento dei contatori di energia elettrica utilizzati in Italia):
-- se l'assorbimento complessivo supera il valore di "Potenza Massima Ritardato", il pacchetto attende il valore in minuti di "Minuti distacco ritardato", dopo i quali inizia a scollegare i carichi;
-- se l'assorbimento complessivo supera invece il valor di "Potenza massima immediato", attende un numero di secondi impostato in "Secondi distacco immediato" e poi inizia il distacco.
 
-Lo scollegamento dei carichi che stanno assorbendo energia parte da quelli a minore priorità (Carico 20) fino a quelli a maggiore priorità (Carico 1), fino a che l'utilizzo complessivo della potenza rientri nel limite prefissato. Se un carico non sta assorbendo, non viene distaccato.
-Lo script tiene memoria dell'assorbimento del carico prima del distacco e lo ricollega solo quando la disponibilità di potenza è sufficiente a non causare un nuovo distacco, in ordine di priorità inverso (da Carico 1 a Carico 20).
-La configurazione è interamente tramite interfaccia grafica, tranne il gruppo di notifica (notify.tutti) che va impostato manualmente.
+The following package, combined with the python script "update_entities.py" aims to avoid the detachment of the meter due to too much power absorbed by the various appliances (loads).
+A fundamental hardware requirement is the presence of switches on the loads to be controlled and a sensor that measures the power of the individual loads. 
+I used Shelly 1PM and Shelly Plug S devices, perfect for the purpose.
+It is recommended, but not mandatory, to use a sensor that monitors the overall consumption of the system (eg Shelly EM or an ESP8266 + PZEM).
+The logic envisages the configuration of two maximum power thresholds and two intervention times (which reflect the operating logic of the electricity meters used in Italy):
+- if the overall absorption exceeds the value of "Maximum Delayed Power", the package waits for the value in minutes of "Delayed Detachment Minutes", after which it starts to disconnect the loads;
+- if the overall absorption exceeds the value of "Immediate maximum power", wait for a number of seconds set in "Seconds immediate detachment" and then start the detachment.
 
-# Installazione
-- Copiare il file "packages/pc.yaml" nella directory "packages"
-- Copiare i file "python_scripts/update_entities.py" e "python_scripts/update_entities_new.py" nella directory "python_scripts"
-- In alternativa, è possibile scaricare il file ZIP ed estrarre il contenuto della cartella "HA_PowerControl-main" nella cartella di Home Assistant.
-- [Abilitare i packages](https://www.home-assistant.io/docs/configuration/packages/)
-- [Abilitare gli script python](https://www.home-assistant.io/integrations/python_script/)
-- Aggiungere il contenuto del file "pc.lovelace" all'interfaccia Lovelace.
-- Creare un gruppo di notifica "notify.tutti" nel file "configuration.yaml" ed inserirvi i device che riceveranno le notifiche di intervento.
-- [Configurare il recoder](https://www.home-assistant.io/integrations/recorder/) per includere i seguenti sensori:
-  - sensor.potenza_carichi_selezionato
-  - sensor.potenza_carichi_sospesa
-  - sensor.potenza_massima
+The disconnection of the loads that are absorbing energy starts from those with lower priority (Load 20) up to those with higher priority (Load 1), until the overall use of power is within the set limit. If a load is not absorbing, it is not detached.
+The script keeps memory of the load absorption before the detachment and reconnects it only when the availability of power is sufficient not to cause a new detachment, in reverse priority order (from Load 1 to Load 20).
+The configuration is entirely via graphical interface, except for the notification group (notify.tutti) which must be set manually.
 
-# Configurazione
-Impostare i parametri di configurazione dell'interfaccia grafica Lovelace.
+# Installing
 
-# Sensore potenza carichi
-La soluzione più efficace è utilizzare un sensore di potenza a monte dell'impianto, poco prima del contatore. In tal caso basta selezionare il sensore appropriato nella configurazione.
-In alternativa è possibile utilizzare i sensori di potenza dei maggiori carichi utilizzati (sensor.potenza_carichi_virtuale) e mantenere un certo margine di tolleranza.
-Questo comporta di monitorare tutti i maggiori carichi (forno, fornelli, phon, condizionatori, ecc...).
-Naturalmente in questo modo non si può valutare il consumo complessivo, quindi si potrebbe superare il valore limite senza che intervenga il controllo carichi.
-Ma utilizzando un valore conservativo di potenza massima (ad es. 3kW) e contando sulla tolleranze di 180 minuti fino al 33% (nell'es. 4kW) dovrebbe essere funzionale.
+- Copy the file "packages/pc.yaml" to the "packages" directory
+- Copy the files "python_scripts/update_entities.py" and "python_scripts/update_entities_new.py" to the "python_scripts" directory
+- Alternatively, you can download the ZIP file and extract the contents of the "HA_PowerControl-main" folder to the Home Assistant folder.
+- [Enable packages](https://www.home-assistant.io/docs/configuration/packages/)
+- [Enable python scripts](https://www.home-assistant.io/integrations/python_script/)
+- Add the contents of the file "pc.lovelace" to the Lovelace interface.
+- Create a notification group "notify.tutti" in the file "configuration.yaml" and insert the devices that will receive the intervention notifications.
+- [Configure the recoder](https://www.home-assistant.io/integrations/recorder/) to include the following sensors:
+  - sensor.selected_power_loads
+  - sensor.suspended_power_loads
+  - sensor.maximum_power
+
+# Configuration
+Set the configuration parameters of the Lovelace graphical interface.
+
+# Power Load Sensor
+The most effective solution is to use a power sensor upstream of the system, just before the meter. In this case, simply select the appropriate sensor in the configuration.
+Alternatively, it is possible to use the power sensors of the increased loads used (sensor.potenza_carichi_virtuale) and maintain a certain margin of tolerance.
+This involves monitoring all major loads (oven, stove, hair dryer, air conditioners, etc ...).
+Of course, in this way the overall consumption cannot be assessed, so the limit value could be exceeded without load control intervening.
+But using a conservative maximum power value (e.g. 3kW) and counting on the tolerances of 180 minutes up to 33% (e.g. 4kW) should be functional.
 
 # Screenshot
 ![image](https://user-images.githubusercontent.com/7837288/107847400-773a8c80-6deb-11eb-9c08-90e9998ffe08.png)
 ![1](https://user-images.githubusercontent.com/7837288/212674703-2ba39593-9dea-4e0d-8f14-76562bd82f96.png)
 
 # Debug
-E' possibile attivare la scrittura di messaggi di log abilitando il componente relativo nella [sezione logger](https://www.home-assistant.io/integrations/logger/) del file di configurazione configuration.yaml:
-```python
-logger:
-  default: error
-  logs:
-    homeassistant.components.pc: debug
+
+It is possible to activate the writing of log messages by enabling the relative component in the [logger section](https://www.home-assistant.io/integrations/logger/) of the configuration.yaml configuration file:
+'''python
+Logger:
+ default: error
+ Logs:
+ homeassistant.components.pc: debugging
 ```
