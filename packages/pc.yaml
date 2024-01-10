@@ -95,7 +95,7 @@ sensor:
 # disabled.
   - platform: template
     sensors:
-      suspended_power:
+      suspended_load:
         unit_of_measurement: 'W'
         value_template: >
           {{ states('input_number.suspended_load_1')|int(default=0) + 

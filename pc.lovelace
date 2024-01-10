@@ -15,9 +15,9 @@
             entities:
               - entity: sensor.delayed_maximum_power
                 name: Maximum
-              - entity: sensor.selected_power_loads
+              - entity: sensor.selected_power_load
                 name: In use
-              - entity: sensor.suspended_power_loads
+              - entity: sensor.suspended_load
                 name: Waiting
             refresh_interval: 0
             title: Power Graph
@@ -28,10 +28,10 @@
                 icon: hass:car-cruise-control
               - entity: input_boolean.power_control_settings
                 icon: hass:car-cruise-control
-              - entity: sensor.selected_power_loads
+              - entity: sensor.selected_power_load
                 name: Used Power
                 icon: hass:power-plug
-              - entity: sensor.suspended_power_loads
+              - entity: sensor.suspended_load
                 name: Waiting Power
                 icon: hass:power-plug-off
             state_color: true
