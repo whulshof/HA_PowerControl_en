@@ -154,26 +154,26 @@ input_text:
   power_load_19:
   power_load_20:
 
-  load_1_switch:
-  load_2_switch:
-  load_3_switch:
-  load_4_switch:
-  load_5_switch:
-  load_6_switch:
-  load_7_switch:
-  load_8_switch:
-  load_9_switch:
-  load_10_switch:
-  load_11_switch:
-  load_12_switch:
-  load_13_switch:
-  load_14_switch:
-  load_15_switch:
-  load_16_switch:
-  load_17_switch:
-  load_18_switch:
-  load_19_switch:
-  load_20_switch:
+  load_switch_1:
+  load_switch_2:
+  load_switch_3:
+  load_switch_4:
+  load_switch_5:
+  load_switch_6:
+  load_switch_7:
+  load_switch_8:
+  load_switch_9:
+  load_switch_10:
+  load_switch_11:
+  load_switch_12:
+  load_switch_13:
+  load_switch_14:
+  load_switch_15:
+  load_switch_16:
+  load_switch_17:
+  load_switch_18:
+  load_switch_19:
+  load_switch_20:
 
   power_load:
 
@@ -195,7 +195,7 @@ input_boolean:
     initial: off
     
 # If set on, activate the new script that filters only entities starting with "sensor.power" and "switch.switch"
-  selection_python_script:
+  python_script_selection:
     name: Selection Python Script
 
     
@@ -341,83 +341,83 @@ input_select:
       - Select
 
 # Load switch
-  load_1_switch:
+  load_switch_1:
     name: Priority Load Switch 1
     options:
       - Select
-  load_2_switch:
+  load_switch_2:
     name: Priority Load Switch 2
     options:
       - Select
-  load_3_switch:
+  load_switch_3:
     name: Priority Load Switch 3
     options:
       - Select
-  load_4_switch:
+  load_switch_4:
     name: Priority Load Switch 4
     options:
       - Select
-  load_5_switch:
+  load_switch_5:
     name: Priority Load Switch 5
     options:
       - Select
-  load_6_switch:
+  load_switch_6:
     name: Priority Load Switch 6
     options:
       - Select
-  load_7_switch:
+  load_switch_7:
     name: Priority Load Switch 7
     options:
       - Select
-  load_8_switch:
+  load_switch_8:
     name: Priority Load Switch 8
     options:
       - Select
-  load_9_switch:
+  load_switch_9:
     name: Priority Load Switch 9
     options:
       - Select
-  load_10_switch:
+  load_switch_10:
     name: Priority Load Switch 10
     options:
       - Select
-  load_11_switch:
+  load_switch_11:
     name: Priority Load Switch 11
     options:
       - Select
-  load_12_switch:
+  load_switch_12:
     name: Priority Load Switch 12
     options:
       - Select
-  load_13_switch:
+  load_switch_13:
     name: Priority Load Switch 13
     options:
       - Select
-  load_14_switch:
+  load_switch_14:
     name: Priority Load Switch 14
     options:
       - Select
-  load_15_switch:
+  load_switch_15:
     name: Priority Load Switch 15
     options:
       - Select
-  load_16_switch:
+  load_switch_16:
     name: Priority Load Switch 16
     options:
       - Select
-  load_17_switch:
+  load_switch_17:
     name: Priority Load Switch 17
     options:
       - Select
-  load_18_switch:
+  load_switch_18:
     name: Priority Load Switch 18
     options:
       - Select
-  load_19_switch:
+  load_switch_19:
     name: Priority Load Switch 19
     options:
       - Select
-  load_20_switch:
+  load_switch_20:
     name: Priority Load Switch 20
     options:
       - Select
@@ -518,8 +518,6 @@ automation:
     trigger:
       - platform: homeassistant
         event: start
-#      - platform: state
-#        entity_id: input_boolean.selection_python_script
         id: start
       - platform: event
         id: reload
@@ -538,8 +536,8 @@ automation:
             sequence:
               - service: script.turn_on
                 data: { }
-                entity_id: script.powercontrol_configurazione_popola_entita
-              - wait_template: "{{ state_attr('script.powercontrol_configurazione_popola_entita','current') == 0 }}"
+                entity_id: script.powercontrol_populate_entity_configuration
+              - wait_template: "{{ state_attr('script.powercontrol_populate_entity_configuration','current') == 0 }}"
           - conditions:
               - condition: trigger
                 id: reload
@@ -548,17 +546,14 @@ automation:
                   minutes: 1
               - service: script.turn_on
                 data: { }
-                entity_id: script.powercontrol_configurazione_popola_entita
-              - wait_template: "{{ state_attr('script.powercontrol_configurazione_popola_entita','current') == 0 }}"
+                entity_id: script.powercontrol_populate_entity_configuration
+              - wait_template: "{{ state_attr('script.powercontrol_populate_entity_configuration','current') == 0 }}"
       - service: system_log.write
         data_template:
           level: debug
           logger: homeassistant.components.pc
           message: "Configuration Automation - Load - End Configuration Script"
 
-      # Automazione che si triggera nel momento in cui la la potenza utilizzata supera la potenza massima impostata.
-      # Agisce dopo TOT secondi dal superamento del limite, avvia lo script di distacco ed invia notifica di intervento.
-      # Ripete l'avvio dello script di distacco finché la potenza impegnata non rientra nel limite.
       # Automation that is triggered when the power used exceeds the maximum power set.
       # Acts after TOT seconds from exceeding the limit, starts the detachment script and sends intervention notification.
       # Repeats the start of the detachment script until the committed power is within the limit.
@@ -589,13 +584,9 @@ automation:
         message: "Load Automation Stop Triggered: Load Power ({{ states(states('input_text.power_load'))|int(default=0) }}))"
     - choose:
       - conditions:
-#          - condition: state
-#            entity_id: input_boolean.selection_python_script
-#            state: 'off'
           - condition: trigger
             id: immediate
         sequence:
-#          - service: python_script.update_entities
           - service: input_boolean.turn_on
             target:
               entity_id: input_boolean.trigger_sensor
@@ -605,13 +596,9 @@ automation:
               logger: homeassistant.components.pc
               message: "Load Automation Stop Triggered: Immediate Trigger Type"
       - conditions:
-#          - condition: state
-#            entity_id: input_boolean.selection_python_script
-#            state: 'on'
           - condition: trigger
             id: delayed
         sequence:
-#          - service: python_script.update_entities_new
           - service: input_boolean.turn_off
             target:
               entity_id: input_boolean.trigger_sensor
@@ -630,7 +617,6 @@ automation:
               message: "Started load stop script: load power {{ states(states('input_text.power_load'))|int(default=0)}}"
           - service: script.turn_on
             data: {}
-#            entity_id: script.stop_carichi_generale
             entity_id: script.genaral_stop_load
         until:
           - condition: template
@@ -643,7 +629,6 @@ automation:
       target:
         entity_id: input_boolean.trigger_sensor
 
-# Se per TOT minuti il limite di potenza è rispettato, avvia lo script di riattivazione dei carichi fino a che la potenza "sospesa" non è zero.
 # If the power limit is respected for TOT minutes, start the load reactivation script until the "suspended" power is zero.
   - id: 'powercontrol_load_start'
     alias: PowerControl - Load Start
@@ -661,540 +646,11 @@ automation:
     - condition: template
       value_template: "{{ states('sensor.suspended_loads')|int(default=0) > 0 }}"
     action:
-
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
-        message: "Configuration Automation - Populate entities - Finished python scripts"
-    mode: single
-
-# When starting HA wait for the "Populate entities" automation to finish, then load the switch configuration
-# and power sensors.
-  - id: 'powercontrol_loads_configuration'
-    alias: PowerControl - Loads - Configuration
-    trigger:
-      platform: homeassistant
-      event: start
-    action:
-      - service: system_log.write
-        data_template:
-          level: debug
-          logger: homeassistant.components.pc
-          message: "Automation Configuration - Upload - Start automation, wait for end automation powercontrol_populate_entity_configuration"
-      - wait_template: "{{ state_attr('automation.powercontrol_populate_entity_configuration','current') == 0 }}"
-      - service: system_log.write
-        data_template:
-          level: debug
-          logger: homeassistant.components.pc
-          message: "Configuration Automation - Loads - Load input_select by its input_text"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load
-          option: "{{ states('input_text.power_load') }}"
-              
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_1
-          option: "{{ states('input_text.power_load_1') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_2
-          option: "{{ states('input_text.power_load_2') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_3
-          option: "{{ states('input_text.power_load_3') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_4
-          option: "{{ states('input_text.power_load_4') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_5
-          option: "{{ states('input_text.power_load_5') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_6
-          option: "{{ states('input_text.power_load_6') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_7
-          option: "{{ states('input_text.power_load_7') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_8
-          option: "{{ states('input_text.power_load_8') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_9
-          option: "{{ states('input_text.power_load_9') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_10
-          option: "{{ states('input_text.power_load_10') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_11
-          option: "{{ states('input_text.power_load_11') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_12
-          option: "{{ states('input_text.power_load_12') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_13
-          option: "{{ states('input_text.power_load_13') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_14
-          option: "{{ states('input_text.power_load_14') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_15
-          option: "{{ states('input_text.power_load_15') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_16
-          option: "{{ states('input_text.power_load_16') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_17
-          option: "{{ states('input_text.power_load_17') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_18
-          option: "{{ states('input_text.power_load_18') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_19
-          option: "{{ states('input_text.power_load_19') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.power_load_20
-          option: "{{ states('input_text.power_load_20') }}"
-          
-
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_1_switch
-          option: "{{ states('input_text.load_1_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_2_switch
-          option: "{{ states('input_text.load_2_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_3_switch
-          option: "{{ states('input_text.load_3_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_4_switch
-          option: "{{ states('input_text.load_4_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_5_switch
-          option: "{{ states('input_text.load_5_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_6_switch
-          option: "{{ states('input_text.load_6_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_7_switch
-          option: "{{ states('input_text.load_7_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_8_switch
-          option: "{{ states('input_text.load_8_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_9_switch
-          option: "{{ states('input_text.load_9_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_10_switch
-          option: "{{ states('input_text.load_10_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_11_switch
-          option: "{{ states('input_text.load_11_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_12_switch
-          option: "{{ states('input_text.load_12_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_13_switch
-          option: "{{ states('input_text.load_13_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_14_switch
-          option: "{{ states('input_text.load_14_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_15_switch
-          option: "{{ states('input_text.load_15_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_16_switch
-          option: "{{ states('input_text.load_16_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_17_switch
-          option: "{{ states('input_text.load_17_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_18_switch
-          option: "{{ states('input_text.load_18_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_19_switch
-          option: "{{ states('input_text.load_19_switch') }}"
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.load_20_switch
-          option: "{{ states('input_text.load_20_switch') }}"
-
-      - service: system_log.write
-        data_template:
-          level: debug
-          logger: homeassistant.components.pc
-          message: "Configuration Automation - Upload - End of Loading"
-
-# When a parameter is changed in PowerControl configuration via input_select,
-# waits for the "Load" automation to finish, then loads the value into the relative input_text.
-  - id: 'powercontrol_configuration_save'
-    alias: PowerControl - Configuration - Save
-    trigger:
-      platform: state
-      entity_id: 
-        - input_select.power_load
-        - input_select.power_load_1
-        - input_select.power_load_2
-        - input_select.power_load_3
-        - input_select.power_load_4
-        - input_select.power_load_5
-        - input_select.power_load_6
-        - input_select.power_load_7
-        - input_select.power_load_8
-        - input_select.power_load_9
-        - input_select.power_load_10
-        - input_select.power_load_11
-        - input_select.power_load_12
-        - input_select.power_load_13
-        - input_select.power_load_14
-        - input_select.power_load_15
-        - input_select.power_load_16
-        - input_select.power_load_17
-        - input_select.power_load_18
-        - input_select.power_load_19
-        - input_select.power_load_20
-        
-        - input_select.load_1_switch
-        - input_select.load_2_switch
-        - input_select.load_3_switch
-        - input_select.load_4_switch
-        - input_select.load_5_switch
-        - input_select.load_6_switch
-        - input_select.load_7_switch
-        - input_select.load_8_switch
-        - input_select.load_9_switch
-        - input_select.load_10_switch
-        - input_select.load_11_switch
-        - input_select.load_12_switch
-        - input_select.load_13_switch
-        - input_select.load_14_switch
-        - input_select.load_15_switch
-        - input_select.load_16_switch
-        - input_select.load_17_switch
-        - input_select.load_18_switch
-        - input_select.load_19_switch
-        - input_select.load_20_switch
-      
-    action:
-      - service: system_log.write
-        data_template:
-          level: debug
-          logger: homeassistant.components.pc
-          message: "Configuration Automation - Save - Start automation, wait for the end of automation powercontrol_loads_configuration"
-      - wait_template: "{{ state_attr('automation.powercontrol_loads_configuration','current') == 0 }}"
-      - service: system_log.write
-      
-        data_template:
-          level: debug
-          logger: homeassistant.components.pc
-          message: "Automation Configuration - Save - Except(?) input_select in input_text"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_loads
-          value: "{{ states('input_select.power_loads') }}"
-
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_1
-          value: "{{ states('input_select.power_load_1') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_2
-          value: "{{ states('input_select.power_load_2') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_3
-          value: "{{ states('input_select.power_load_3') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_4
-          value: "{{ states('input_select.power_load_4') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_5
-          value: "{{ states('input_select.power_load_5') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_6
-          value: "{{ states('input_select.power_load_6') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_7
-          value: "{{ states('input_select.power_load_7') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_8
-          value: "{{ states('input_select.power_load_8') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_9
-          value: "{{ states('input_select.power_load_9') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_10
-          value: "{{ states('input_select.power_load_10') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_11
-          value: "{{ states('input_select.power_load_11') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_12
-          value: "{{ states('input_select.power_load_12') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_13
-          value: "{{ states('input_select.power_load_13') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_14
-          value: "{{ states('input_select.power_load_14') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_15
-          value: "{{ states('input_select.power_load_15') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_16
-          value: "{{ states('input_select.power_load_16') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_17
-          value: "{{ states('input_select.power_load_17') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_18
-          value: "{{ states('input_select.power_load_18') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_19
-          value: "{{ states('input_select.power_load_19') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.power_load_20
-          value: "{{ states('input_select.power_load_20') }}"
-
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_1_switch
-          value: "{{ states('input_select.load_1_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_2_switch
-          value: "{{ states('input_select.load_2_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_3_switch
-          value: "{{ states('input_select.load_3_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_4_switch
-          value: "{{ states('input_select.load_4_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_5_switch
-          value: "{{ states('input_select.load_5_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_6_switch
-          value: "{{ states('input_select.load_6_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_7_switch
-          value: "{{ states('input_select.load_7_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_8_switch
-          value: "{{ states('input_select.load_8_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_9_switch
-          value: "{{ states('input_select.load_9_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_10_switch
-          value: "{{ states('input_select.load_10_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_11_switch
-          value: "{{ states('input_select.load_11_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_12_switch
-          value: "{{ states('input_select.load_12_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_13_switch
-          value: "{{ states('input_select.load_13_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_14_switch
-          value: "{{ states('input_select.load_14_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_15_switch
-          value: "{{ states('input_select.load_15_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_16_switch
-          value: "{{ states('input_select.load_16_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_17_switch
-          value: "{{ states('input_select.load_17_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_18_switch
-          value: "{{ states('input_select.load_18_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_19_switch
-          value: "{{ states('input_select.load_19_switch') }}"
-      - service: input_text.set_value
-        data:
-          entity_id: input_text.load_20_switch
-          value: "{{ states('input_select.load_20_switch') }}"
-
-      - service: system_log.write
-        data_template:
-          level: debug
-          logger: homeassistant.components.pc
-          message: "Configuration Automation - Save - End of Save"
-
-
-# Automation that is triggered when the power used exceeds the maximum power set.
-# It acts after TOT seconds from exceeding the limit, starts the posting script and sends intervention notification.
-# Repeats the detachment script until the committed power is within the limit.
-  - id: 'powercontrol_stop_loads'
-    alias: PowerControl - Stop Loads
-    description: ''
-    trigger:
-    - platform: template
-      value_template: "{{ states(states('input_text.power_loads')) |int(default=0) > states('sensor.immediate_maximum_power')|int(default=0) }}"
-      for: 
-        seconds: "{{ states('input_number.immediate_stop_pace')|int(default=0) }}"
-      id: immediate
-    - platform: template
-      value_template: "{{ states(states('input_text.power_loads')) |int(default=0) > states('sensor.delayed_maximum_power')|int(default=0) }}"
-      for: 
-        minutes: "{{ states('input_number.delayed_stop_pace')|int(default=0) }}"
-      id: delayed
-    condition:
-    - condition: state
-      entity_id: input_boolean.active_power_control
-      state: 'on'
-    action:
-    - service: system_log.write
-      data_template:
-        level: debug
-        logger: homeassistant.components.pc
-        message: "Triggered Stop Load Automation: Power Loads ({{ states(states('input_text.power_loads'))|int(default=0) }}))"
-    - choose:
-      - conditions:
-          - condition: trigger
-            id: immediate
-        sequence:
-          - service: input_boolean.turn_on
-            target: 
-              entity_id: input_boolean.trigger_sensor
-          - service: system_log.write
-            data_template:
-              level: debug
-              logger: homeassistant.components.pc
-              message: "Load Automation Stop triggered: Trigger Type Immediate"
-      - conditions:
-          - condition: trigger
-            id: delayed
-        sequence:
-          - service: input_boolean.turn_off
-            target: 
-              entity_id: input_boolean.trigger_sensor
-          - service: system_log.write
-            data_template:
-              level: debug
-              logger: homeassistant.components.pc
-              message: "Load Automation Stop triggered: Trigger Type Delayed"
-        
-    - repeat:
-        sequence:
-          - service: system_log.write
-            data_template:
-              level: debug
-              logger: homeassistant.components.pc
-              message: "Started script stop loads: power loads {{ states(states('input_text.power_loads'))|int(default=0)}}"
-          - service: script.turn_on
-            data: {}
-            entity_id: script.stop_loads_general
-        until:
-          - condition: template
-            value_template: >
-              {{
-              ((states(states('input_text.power_loads'))|int(default=0) > states('sensor.delayed_maximum_power')|int(default=0)) and states('input_boolean.trigger_sensor') == "off") or
-              ((states(states('input_text.power_loads'))|int(default=0) > states('sensor.immediate_maximum_power')|int(default=0)) and states('input_boolean.trigger_sensor') == "on") 
-              }}
-    - service: input_boolean.turn_off
-      target: 
-        entity_id: input_boolean.trigger_sensor
-    mode: single
-
-# If for TOT minutes the power limit is respected, start the load reactivation script until the "suspended" power is zero.
-  - id: 'powercontrol_loads_start'
-    alias: PowerControl - Loads Start
-    description: ''
-    trigger:
-    - platform: template
-      value_template: "{{ ((states(states('input_text.power_loads'))|int(default=0) + states('sensor.suspended_loads')|int(default=0)) < states('sensor.delayed_maximum_power')|int(default=0)) and (states('sensor.suspended_loads')|int(default=0) > 0) }}"
-      for:
-        minutes: "{{ states('input_number.restart_delay')|int(default=0) }}"
-    condition:
-    - condition: state
-      entity_id: input_boolean.active_power_control
-      state: 'on'
-    - condition: template
-      value_template: "{{ states('sensor.suspended_loads')|int(default=0) > 0 }}"
-    action:
-    - service: system_log.write
-      data_template:
-        level: debug
-        logger: homeassistant.components.pc
-        message: "Triggered load start automation: Suspended Power Loads ({{ states(states('input_text.power_loads'))|int(default=0) + states('sensor.suspended_loads')|int(default=0)}}) < Maximum Power ({{states('sensor.delayed_maximum_power')|int(default=0) }}) "
+        message: "Automazione start carichi triggerata: Potenza carichi+sospesa ({{ states(states('input_text.potenza_carichi'))|int(default=0) + states('sensor.potenza_carichi_sospesa')|int(default=0)}}) < Potenza massima ({{states('sensor.potenza_massima_ritardato')|int(default=0) }}) "
     - repeat:
         until:
         - condition: template
@@ -1208,12 +664,13 @@ automation:
         - service: script.turn_on
           data: {}
           entity_id: script.start_loads_general
-    mode: single
 
 # Checks if a load is turned back on manually, i.e. if its switch is activated by the user,
 # and resets its suspended power.
   - id: 'powercontrol_watchdog_suspended'
     alias: PowerControl - Check on manual reactivation
+    mode: single
+
     description: >-
       Monitor load switches and, if one of them is active but its power
        Suspended is different from 0, the door to zero.
@@ -1221,26 +678,26 @@ automation:
       - platform: template
         value_template: >
               {{
-              ( states(states('input_text.load_1_switch')) == 'on' and states('input_number.suspended_load_1')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_2_switch')) == 'on' and states('input_number.suspended_load_2')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_3_switch')) == 'on' and states('input_number.suspended_load_3')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_4_switch')) == 'on' and states('input_number.suspended_load_4')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_5_switch')) == 'on' and states('input_number.suspended_load_5')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_6_switch')) == 'on' and states('input_number.suspended_load_6')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_7_switch')) == 'on' and states('input_number.suspended_load_7')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_8_switch')) == 'on' and states('input_number.suspended_load_8')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_9_switch')) == 'on' and states('input_number.suspended_load_9')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_10_switch')) == 'on' and states('input_number.suspended_load_10')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_11_switch')) == 'on' and states('input_number.suspended_load_11')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_12_switch')) == 'on' and states('input_number.suspended_load_12')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_13_switch')) == 'on' and states('input_number.suspended_load_13')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_14_switch')) == 'on' and states('input_number.suspended_load_14')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_15_switch')) == 'on' and states('input_number.suspended_load_15')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_16_switch')) == 'on' and states('input_number.suspended_load_16')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_17_switch')) == 'on' and states('input_number.suspended_load_17')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_18_switch')) == 'on' and states('input_number.suspended_load_18')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_19_switch')) == 'on' and states('input_number.suspended_load_19')|int(default=0) > 0 ) or
-              ( states(states('input_text.load_20_switch')) == 'on' and states('input_number.suspended_load_20')|int(default=0) > 0 )
+              ( states(states('input_text.load_switch_1')) == 'on' and states('input_number.suspended_load_1')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_2')) == 'on' and states('input_number.suspended_load_2')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_3')) == 'on' and states('input_number.suspended_load_3')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_4')) == 'on' and states('input_number.suspended_load_4')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_5')) == 'on' and states('input_number.suspended_load_5')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_6')) == 'on' and states('input_number.suspended_load_6')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_7')) == 'on' and states('input_number.suspended_load_7')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_8')) == 'on' and states('input_number.suspended_load_8')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_9')) == 'on' and states('input_number.suspended_load_9')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_10')) == 'on' and states('input_number.suspended_load_10')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_11')) == 'on' and states('input_number.suspended_load_11')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_12')) == 'on' and states('input_number.suspended_load_12')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_13')) == 'on' and states('input_number.suspended_load_13')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_14')) == 'on' and states('input_number.suspended_load_14')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_15')) == 'on' and states('input_number.suspended_load_15')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_16')) == 'on' and states('input_number.suspended_load_16')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_17')) == 'on' and states('input_number.suspended_load_17')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_18')) == 'on' and states('input_number.suspended_load_18')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_19')) == 'on' and states('input_number.suspended_load_19')|int(default=0) > 0 ) or
+              ( states(states('input_text.load_switch_20')) == 'on' and states('input_number.suspended_load_20')|int(default=0) > 0 )
               }}
         for:
           seconds: 5
@@ -1254,26 +711,26 @@ automation:
       - service: input_number.set_value
         data_template:
           value: 0
-          entity_id: "{% if states(states('input_text.load_1_switch')) == 'on' and states('input_number.suspended_load_1')|int(default=0) > 0 %}input_number.suspended_load_1
-          {% elif states(states('input_text.load_2_switch')) == 'on' and states('input_number.suspended_load_2')|int(default=0) > 0 %}input_number.suspended_load_2
-          {% elif states(states('input_text.load_3_switch')) == 'on' and states('input_number.suspended_load_3')|int(default=0) > 0 %}input_number.suspended_load_3
-          {% elif states(states('input_text.load_4_switch')) == 'on' and states('input_number.suspended_load_4')|int(default=0) > 0 %}input_number.suspended_load_4
-          {% elif states(states('input_text.load_5_switch')) == 'on' and states('input_number.suspended_load_5')|int(default=0) > 0 %}input_number.suspended_load_5
-          {% elif states(states('input_text.load_6_switch')) == 'on' and states('input_number.suspended_load_6')|int(default=0) > 0 %}input_number.suspended_load_6
-          {% elif states(states('input_text.load_7_switch')) == 'on' and states('input_number.suspended_load_7')|int(default=0) > 0 %}input_number.suspended_load_7
-          {% elif states(states('input_text.load_8_switch')) == 'on' and states('input_number.suspended_load_8')|int(default=0) > 0 %}input_number.suspended_load_8
-          {% elif states(states('input_text.load_9_switch')) == 'on' and states('input_number.suspended_load_9')|int(default=0) > 0 %}input_number.suspended_load_9
-          {% elif states(states('input_text.load_10_switch')) == 'on' and states('input_number.suspended_load_10')|int(default=0) > 0 %}input_number.suspended_load_10
-          {% elif states(states('input_text.load_11_switch')) == 'on' and states('input_number.suspended_load_11')|int(default=0) > 0 %}input_number.suspended_load_11
-          {% elif states(states('input_text.load_12_switch')) == 'on' and states('input_number.suspended_load_12')|int(default=0) > 0 %}input_number.suspended_load_12
-          {% elif states(states('input_text.load_13_switch')) == 'on' and states('input_number.suspended_load_13')|int(default=0) > 0 %}input_number.suspended_load_13
-          {% elif states(states('input_text.load_14_switch')) == 'on' and states('input_number.suspended_load_14')|int(default=0) > 0 %}input_number.suspended_load_14
-          {% elif states(states('input_text.load_15_switch')) == 'on' and states('input_number.suspended_load_15')|int(default=0) > 0 %}input_number.suspended_load_15
-          {% elif states(states('input_text.load_16_switch')) == 'on' and states('input_number.suspended_load_16')|int(default=0) > 0 %}input_number.suspended_load_16
-          {% elif states(states('input_text.load_17_switch')) == 'on' and states('input_number.suspended_load_17')|int(default=0) > 0 %}input_number.suspended_load_17
-          {% elif states(states('input_text.load_18_switch')) == 'on' and states('input_number.suspended_load_18')|int(default=0) > 0 %}input_number.suspended_load_18
-          {% elif states(states('input_text.load_19_switch')) == 'on' and states('input_number.suspended_load_19')|int(default=0) > 0 %}input_number.suspended_load_11
-          {% elif states(states('input_text.load_20_switch')) == 'on' and states('input_number.suspended_load_20')|int(default=0) > 0 %}input_number.suspended_load_20
+          entity_id: "{% if states(states('input_text.load_switch_1')) == 'on' and states('input_number.suspended_load_1')|int(default=0) > 0 %}input_number.suspended_load_1
+          {% elif states(states('input_text.load_switch_2')) == 'on' and states('input_number.suspended_load_2')|int(default=0) > 0 %}input_number.suspended_load_2
+          {% elif states(states('input_text.load_switch_3')) == 'on' and states('input_number.suspended_load_3')|int(default=0) > 0 %}input_number.suspended_load_3
+          {% elif states(states('input_text.load_switch_4')) == 'on' and states('input_number.suspended_load_4')|int(default=0) > 0 %}input_number.suspended_load_4
+          {% elif states(states('input_text.load_switch_5')) == 'on' and states('input_number.suspended_load_5')|int(default=0) > 0 %}input_number.suspended_load_5
+          {% elif states(states('input_text.load_switch_6')) == 'on' and states('input_number.suspended_load_6')|int(default=0) > 0 %}input_number.suspended_load_6
+          {% elif states(states('input_text.load_switch_7')) == 'on' and states('input_number.suspended_load_7')|int(default=0) > 0 %}input_number.suspended_load_7
+          {% elif states(states('input_text.load_switch_8')) == 'on' and states('input_number.suspended_load_8')|int(default=0) > 0 %}input_number.suspended_load_8
+          {% elif states(states('input_text.load_switch_9')) == 'on' and states('input_number.suspended_load_9')|int(default=0) > 0 %}input_number.suspended_load_9
+          {% elif states(states('input_text.load_switch_10')) == 'on' and states('input_number.suspended_load_10')|int(default=0) > 0 %}input_number.suspended_load_10
+          {% elif states(states('input_text.load_switch_11')) == 'on' and states('input_number.suspended_load_11')|int(default=0) > 0 %}input_number.suspended_load_11
+          {% elif states(states('input_text.load_switch_12')) == 'on' and states('input_number.suspended_load_12')|int(default=0) > 0 %}input_number.suspended_load_12
+          {% elif states(states('input_text.load_switch_13')) == 'on' and states('input_number.suspended_load_13')|int(default=0) > 0 %}input_number.suspended_load_13
+          {% elif states(states('input_text.load_switch_14')) == 'on' and states('input_number.suspended_load_14')|int(default=0) > 0 %}input_number.suspended_load_14
+          {% elif states(states('input_text.load_switch_15')) == 'on' and states('input_number.suspended_load_15')|int(default=0) > 0 %}input_number.suspended_load_15
+          {% elif states(states('input_text.load_switch_16')) == 'on' and states('input_number.suspended_load_16')|int(default=0) > 0 %}input_number.suspended_load_16
+          {% elif states(states('input_text.load_switch_17')) == 'on' and states('input_number.suspended_load_17')|int(default=0) > 0 %}input_number.suspended_load_17
+          {% elif states(states('input_text.load_switch_18')) == 'on' and states('input_number.suspended_load_18')|int(default=0) > 0 %}input_number.suspended_load_18
+          {% elif states(states('input_text.load_switch_19')) == 'on' and states('input_number.suspended_load_19')|int(default=0) > 0 %}input_number.suspended_load_11
+          {% elif states(states('input_text.load_switch_20')) == 'on' and states('input_number.suspended_load_20')|int(default=0) > 0 %}input_number.suspended_load_20
           {% else %}none
           {% endif %}"
       - service: system_log.write
@@ -1281,8 +738,7 @@ automation:
           level: debug
           logger: homeassistant.components.pc
           message: Automation Check Manual reactivation - End
-    mode: single
-    
+
     
 #################################################################
 ######################### SCRIPT  ###############################
@@ -1303,7 +759,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_20')}}"
-        switch: "{{states('input_text.load_20_switch')}}"
+        switch: "{{states('input_text.load_switch_20')}}"
         suspend: "input_number.suspended_load_20"
     - service: system_log.write
       data_template:
@@ -1313,7 +769,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_19')}}"
-        switch: "{{states('input_text.load_19_switch')}}"
+        switch: "{{states('input_text.load_switch_19')}}"
         suspend: "input_number.suspended_load_19"
     - service: system_log.write
       data_template:
@@ -1323,7 +779,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_18')}}"
-        switch: "{{states('input_text.load_18_switch')}}"
+        switch: "{{states('input_text.load_switch_18')}}"
         suspend: "input_number.suspended_load_18"
     - service: system_log.write
       data_template:
@@ -1333,7 +789,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_17')}}"
-        switch: "{{states('input_text.load_17_switch')}}"
+        switch: "{{states('input_text.load_switch_17')}}"
         suspend: "input_number.suspended_load_17"
     - service: system_log.write
       data_template:
@@ -1343,7 +799,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_16')}}"
-        switch: "{{states('input_text.load_16_switch')}}"
+        switch: "{{states('input_text.load_switch_16')}}"
         suspend: "input_number.suspended_load_16"
     - service: system_log.write
       data_template:
@@ -1353,7 +809,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_15')}}"
-        switch: "{{states('input_text.load_15_switch')}}"
+        switch: "{{states('input_text.load_switch_15')}}"
         suspend: "input_number.suspended_load_15"
     - service: system_log.write
       data_template:
@@ -1363,7 +819,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_14')}}"
-        switch: "{{states('input_text.load_14_switch')}}"
+        switch: "{{states('input_text.load_switch_14')}}"
         suspend: "input_number.suspended_load_14"
     - service: system_log.write
       data_template:
@@ -1373,7 +829,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_13')}}"
-        switch: "{{states('input_text.load_13_switch')}}"
+        switch: "{{states('input_text.load_switch_13')}}"
         suspend: "input_number.suspended_load_13"
     - service: system_log.write
       data_template:
@@ -1383,7 +839,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_12')}}"
-        switch: "{{states('input_text.load_12_switch')}}"
+        switch: "{{states('input_text.load_switch_12')}}"
         suspend: "input_number.suspended_load_12"
     - service: system_log.write
       data_template:
@@ -1393,7 +849,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_11')}}"
-        switch: "{{states('input_text.load_11_switch')}}"
+        switch: "{{states('input_text.load_switch_11')}}"
         suspend: "input_number.suspended_load_11"
     - service: system_log.write
       data_template:
@@ -1403,7 +859,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_10')}}"
-        switch: "{{states('input_text.load_10_switch')}}"
+        switch: "{{states('input_text.load_switch_10')}}"
         suspend: "input_number.suspended_load_10"
     - service: system_log.write
       data_template:
@@ -1413,7 +869,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_9')}}"
-        switch: "{{states('input_text.load_9_switch')}}"
+        switch: "{{states('input_text.load_switch_9')}}"
         suspend: "input_number.suspended_load_9"
     - service: system_log.write
       data_template:
@@ -1423,7 +879,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_8')}}"
-        switch: "{{states('input_text.load_8_switch')}}"
+        switch: "{{states('input_text.load_switch_8')}}"
         suspend: "input_number.suspended_load_8"
     - service: system_log.write
       data_template:
@@ -1433,7 +889,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_7')}}"
-        switch: "{{states('input_text.load_7_switch')}}"
+        switch: "{{states('input_text.load_switch_7')}}"
         suspend: "input_number.suspended_load_7"
     - service: system_log.write
       data_template:
@@ -1443,7 +899,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_6')}}"
-        switch: "{{states('input_text.load_6_switch')}}"
+        switch: "{{states('input_text.load_switch_6')}}"
         suspend: "input_number.suspended_load_6"
     - service: system_log.write
       data_template:
@@ -1453,7 +909,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_5')}}"
-        switch: "{{states('input_text.load_5_switch')}}"
+        switch: "{{states('input_text.load_switch_5')}}"
         suspend: "input_number.suspended_load_5"
     - service: system_log.write
       data_template:
@@ -1463,7 +919,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_4')}}"
-        switch: "{{states('input_text.load_4_switch')}}"
+        switch: "{{states('input_text.load_switch_4')}}"
         suspend: "input_number.suspended_load_4"
     - service: system_log.write
       data_template:
@@ -1473,7 +929,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_3')}}"
-        switch: "{{states('input_text.load_3_switch')}}"
+        switch: "{{states('input_text.load_switch_3')}}"
         suspend: "input_number.suspended_load_3"
     - service: system_log.write
       data_template:
@@ -1483,7 +939,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_2')}}"
-        switch: "{{states('input_text.load_2_switch')}}"
+        switch: "{{states('input_text.load_switch_2')}}"
         suspend: "input_number.suspended_load_2"
     - service: system_log.write
       data_template:
@@ -1493,7 +949,7 @@ script:
     - service: script.stop_single_load
       data_template: 
         power: "{{states('input_text.power_load_1')}}"
-        switch: "{{states('input_text.load_1_switch')}}"
+        switch: "{{states('input_text.load_switch_1')}}"
         suspend: "input_number.suspended_load_1"
     mode: single
 
@@ -1510,7 +966,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_1')}}"
-        switch: "{{states('input_text.load_1_switch')}}"
+        switch: "{{states('input_text.load_switch_1')}}"
         suspend: "input_number.suspended_load_1"
     - service: system_log.write
       data_template:
@@ -1520,7 +976,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_2')}}"
-        switch: "{{states('input_text.load_2_switch')}}"
+        switch: "{{states('input_text.load_switch_2')}}"
         suspend: "input_number.suspended_load_2"
     - service: system_log.write
       data_template:
@@ -1530,7 +986,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_3')}}"
-        switch: "{{states('input_text.load_3_switch')}}"
+        switch: "{{states('input_text.load_switch_3')}}"
         suspend: "input_number.suspended_load_3"
     - service: system_log.write
       data_template:
@@ -1540,7 +996,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_4')}}"
-        switch: "{{states('input_text.load_4_switch')}}"
+        switch: "{{states('input_text.load_switch_4')}}"
         suspend: "input_number.suspended_load_4"
     - service: system_log.write
       data_template:
@@ -1550,7 +1006,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_5')}}"
-        switch: "{{states('input_text.load_5_switch')}}"
+        switch: "{{states('input_text.load_switch_5')}}"
         suspend: "input_number.suspended_load_5"
     - service: system_log.write
       data_template:
@@ -1560,7 +1016,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_6')}}"
-        switch: "{{states('input_text.load_6_switch')}}"
+        switch: "{{states('input_text.load_switch_6')}}"
         suspend: "input_number.suspended_load_6"
     - service: system_log.write
       data_template:
@@ -1570,7 +1026,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_7')}}"
-        switch: "{{states('input_text.load_7_switch')}}"
+        switch: "{{states('input_text.load_switch_7')}}"
         suspend: "input_number.suspended_load_7"
     - service: system_log.write
       data_template:
@@ -1580,7 +1036,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_8')}}"
-        switch: "{{states('input_text.load_8_switch')}}"
+        switch: "{{states('input_text.load_switch_8')}}"
         suspend: "input_number.suspended_load_8"
     - service: system_log.write
       data_template:
@@ -1590,7 +1046,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_9')}}"
-        switch: "{{states('input_text.load_9_switch')}}"
+        switch: "{{states('input_text.load_switch_9')}}"
         suspend: "input_number.suspended_load_9"
     - service: system_log.write
       data_template:
@@ -1600,7 +1056,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_10')}}"
-        switch: "{{states('input_text.load_10_switch')}}"
+        switch: "{{states('input_text.load_switch_10')}}"
         suspend: "input_number.suspended_load_10"
     - service: system_log.write
       data_template:
@@ -1610,7 +1066,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_11')}}"
-        switch: "{{states('input_text.load_11_switch')}}"
+        switch: "{{states('input_text.load_switch_11')}}"
         suspend: "input_number.suspended_load_11"
     - service: system_log.write
       data_template:
@@ -1620,7 +1076,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_12')}}"
-        switch: "{{states('input_text.load_12_switch')}}"
+        switch: "{{states('input_text.load_switch_12')}}"
         suspend: "input_number.suspended_load_12"
     - service: system_log.write
       data_template:
@@ -1630,7 +1086,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_13')}}"
-        switch: "{{states('input_text.load_13_switch')}}"
+        switch: "{{states('input_text.load_switch_13')}}"
         suspend: "input_number.suspended_load_13"
     - service: system_log.write
       data_template:
@@ -1640,7 +1096,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_14')}}"
-        switch: "{{states('input_text.load_14_switch')}}"
+        switch: "{{states('input_text.load_switch_14')}}"
         suspend: "input_number.suspended_load_14"
     - service: system_log.write
       data_template:
@@ -1650,7 +1106,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_15')}}"
-        switch: "{{states('input_text.load_15_switch')}}"
+        switch: "{{states('input_text.load_switch_15')}}"
         suspend: "input_number.suspended_load_15"
     - service: system_log.write
       data_template:
@@ -1660,7 +1116,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_16')}}"
-        switch: "{{states('input_text.load_16_switch')}}"
+        switch: "{{states('input_text.load_switch_16')}}"
         suspend: "input_number.suspended_load_16"
     - service: system_log.write
       data_template:
@@ -1670,7 +1126,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_17')}}"
-        switch: "{{states('input_text.load_17_switch')}}"
+        switch: "{{states('input_text.load_switch_17')}}"
         suspend: "input_number.suspended_load_17"
     - service: system_log.write
       data_template:
@@ -1680,7 +1136,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_18')}}"
-        switch: "{{states('input_text.load_18_switch')}}"
+        switch: "{{states('input_text.load_switch_18')}}"
         suspend: "input_number.suspended_load_18"
     - service: system_log.write
       data_template:
@@ -1690,7 +1146,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_19')}}"
-        switch: "{{states('input_text.load_19_switch')}}"
+        switch: "{{states('input_text.load_switch_19')}}"
         suspend: "input_number.suspended_load_19"
     - service: system_log.write
       data_template:
@@ -1700,7 +1156,7 @@ script:
     - service: script.start_single_load
       data_template: 
         power: "{{states('input_text.power_load_20')}}"
-        switch: "{{states('input_text.load_20_switch')}}"
+        switch: "{{states('input_text.load_switch_20')}}"
         sospesa: "input_number.suspended_load_20"
     mode: single
 
@@ -1884,16 +1340,14 @@ script:
         level: debug
         logger: homeassistant.components.pc
         message: "Script Start Load {{ state_attr(switch,'friendly_name') }} - Condition 3 ok"
-
     # We verify that the power in use is less than the maximum delayed power.
     - condition: template
-      value_template: "{{ states(states('input_text.potenza_carichi'))|int(default=0) < states('sensor.potenza_massima_ritardato')|int(default=0)}}"
+      value_template: "{{ states(states('input_text.power_loads'))|int(default=0) < states('sensor.delayed_maximum_power')|int(default=0)}}"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Script Start Load {{ state_attr(switch,'friendly_name') }} - Condition 4 ok"
-
     # Check if, by reactivating the load, the power limit is not exceeded again.
     - condition: template
       value_template: "{{ states(states('input_text.power_loads'))|int(default=0) + states(suspended)|int(default=0) < states('sensor.delayed_maximum_power')|int(default=0) }}"
@@ -1902,12 +1356,11 @@ script:
         level: debug
         logger: homeassistant.components.pc
         message: "Script Start Load {{ state_attr(switch,'friendly_name') }} - Condition 5 ok"
-
     # Set the suspended load power to zero.
     - service: input_number.set_value
       data_template:
         value: 0
-        entity_id: "{{sospesa}}"
+        entity_id: "{{suspended}}"
     - service: system_log.write
       data_template:
         level: debug
@@ -1925,7 +1378,7 @@ script:
     # Send notification
     - service: notify.tutti
       data:
-        title: Limite potenza rientrato
+        title: Recessed power limit
         message: "{{ state_attr(switch,'friendly_name') }} Reactivated"
         data:
           push:
@@ -1938,3 +1391,404 @@ script:
     - delay:
         minutes: "{{ states('input_number.restart_delay') }}"
     mode: queued
+
+
+
+#################################################################
+###################### CONFIGURATION ###########################
+#################################################################
+
+# When HA starts, update the input_slider with the list of entities for the configuration fields.
+  powercontrol_configuration_populate_entities:
+    alias: PowerControl - Configuration - Populate entities
+    sequence:
+    - service: system_log.write
+      data_template:
+        level: debug
+        logger: homeassistant.components.pc
+        message: "Script Configuration - Populate entities - Started python scripts"
+    - choose:
+      - conditions:
+          - condition: state
+            entity_id: input_boolean.python_script_selection
+            state: 'off'
+        sequence:
+          - service: python_script.update_entities
+      - conditions:
+          - condition: state
+            entity_id: input_boolean.python_script_selection
+            state: 'on'
+        sequence:
+          - service: python_script.update_entities_new
+    - service: system_log.write
+      data_template:
+        level: debug
+        logger: homeassistant.components.pc
+        message: "Script Configuration - Populate entities - Finished python scripts"
+
+    - service: system_log.write
+      data_template:
+        level: debug
+        logger: homeassistant.components.pc
+        message: "Script Configuration - Loads - Load input_select by its input_text"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_loads
+        option: "{{ states('input_text.power_loads') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_1
+        option: "{{ states('input_text.power_load_1') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_2
+        option: "{{ states('input_text.power_load_2') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_3
+        option: "{{ states('input_text.power_load_3') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_4
+        option: "{{ states('input_text.power_load_4') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_5
+        option: "{{ states('input_text.power_load_5') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_6
+        option: "{{ states('input_text.power_load_6') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_7
+        option: "{{ states('input_text.power_load_7') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_8
+        option: "{{ states('input_text.power_load_8') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_9
+        option: "{{ states('input_text.power_load_9') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_10
+        option: "{{ states('input_text.power_load_10') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_11
+        option: "{{ states('input_text.power_load_11') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_12
+        option: "{{ states('input_text.power_load_12') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_13
+        option: "{{ states('input_text.power_load_13') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_14
+        option: "{{ states('input_text.power_load_14') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_15
+        option: "{{ states('input_text.power_load_15') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_16
+        option: "{{ states('input_text.power_load_16') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_17
+        option: "{{ states('input_text.power_load_17') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_18
+        option: "{{ states('input_text.power_load_18') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_19
+        option: "{{ states('input_text.power_load_19') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.power_load_20
+        option: "{{ states('input_text.power_load_20') }}"
+
+
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_1
+        option: "{{ states('input_text.load_switch_1') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_2
+        option: "{{ states('input_text.load_switch_2') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_3
+        option: "{{ states('input_text.load_switch_3') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_4
+        option: "{{ states('input_text.load_switch_4') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_5
+        option: "{{ states('input_text.load_switch_5') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_6
+        option: "{{ states('input_text.load_switch_6') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_7
+        option: "{{ states('input_text.load_switch_7') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_8
+        option: "{{ states('input_text.load_switch_8') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_9
+        option: "{{ states('input_text.load_switch_9') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_10
+        option: "{{ states('input_text.load_switch_10') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_11
+        option: "{{ states('input_text.load_switch_11') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_12
+        option: "{{ states('input_text.load_switch_12') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_13
+        option: "{{ states('input_text.load_switch_13') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_14
+        option: "{{ states('input_text.load_switch_14') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_15
+        option: "{{ states('input_text.load_switch_15') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_16
+        option: "{{ states('input_text.load_switch_16') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_17
+        option: "{{ states('input_text.load_switch_17') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_18
+        option: "{{ states('input_text.load_switch_18') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_19
+        option: "{{ states('input_text.load_switch_19') }}"
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.load_switch_20
+        option: "{{ states('input_text.load_switch_20') }}"
+
+    - service: system_log.write
+      data_template:
+        level: debug
+        logger: homeassistant.components.pc
+        message: "Script Configuration - Loads - End of Loading"
+
+# When a parameter is changed in PowerControl configuration via input_select,waits for the "Load" automation to finish, then loads the value into the relative input_text.
+  powercontrol_configuration_save:
+    alias: PowerControl - Configuration - Save
+    sequence:
+      - service: system_log.write
+        data_template:
+          level: debug
+          logger: homeassistant.components.pc
+          message: "Script Configuration - Save - Start automation, wait for automation to finish powercontrol_load_configuration"
+      - wait_template: "{{ state_attr('automation.powercontrol_load_configuration','current') == 0 }}"
+      - service: system_log.write
+
+        data_template:
+          level: debug
+          logger: homeassistant.components.pc
+          message: "Script Configurazione - Save - Save input_select in input_text"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.poer_loads
+          value: "{{ states('input_select.power_loads') }}"
+
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_1
+          value: "{{ states('input_select.power_load_1') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_2
+          value: "{{ states('input_select.power_load_2') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_3
+          value: "{{ states('input_select.power_load_3') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_4
+          value: "{{ states('input_select.power_load_4') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_5
+          value: "{{ states('input_select.power_load_5') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_6
+          value: "{{ states('input_select.power_load_6') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_7
+          value: "{{ states('input_select.power_load_7') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_8
+          value: "{{ states('input_select.power_load_8') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_9
+          value: "{{ states('input_select.power_load_9') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_10
+          value: "{{ states('input_select.power_load_10') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_11
+          value: "{{ states('input_select.power_load_11') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_12
+          value: "{{ states('input_select.power_load_12') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_13
+          value: "{{ states('input_select.power_load_13') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_14
+          value: "{{ states('input_select.power_load_14') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_15
+          value: "{{ states('input_select.power_load_15') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_16
+          value: "{{ states('input_select.power_load_16') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_17
+          value: "{{ states('input_select.power_load_17') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_18
+          value: "{{ states('input_select.power_load_14') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_19
+          value: "{{ states('input_select.power_load_19') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.power_load_20
+          value: "{{ states('input_select.power_load_20') }}"
+
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_1
+          value: "{{ states('input_select.load_switch_1') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_2
+          value: "{{ states('input_select.load_switch_2') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_3
+          value: "{{ states('input_select.load_switch_3') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_4
+          value: "{{ states('input_select.load_switch_4') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_5
+          value: "{{ states('input_select.load_switch_5') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_6
+          value: "{{ states('input_select.load_switch_6') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_7
+          value: "{{ states('input_select.load_switch_7') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_8
+          value: "{{ states('input_select.load_switch_8') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_9
+          value: "{{ states('input_select.load_switch_9') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_10
+          value: "{{ states('input_select.load_switch_10') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_11
+          value: "{{ states('input_select.load_switch_11') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_12
+          value: "{{ states('input_select.load_switch_12') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_13
+          value: "{{ states('input_select.load_switch_13') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_14
+          value: "{{ states('input_select.load_switch_14') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_15
+          value: "{{ states('input_select.load_switch_15') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_16
+          value: "{{ states('input_select.load_switch_16') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_17
+          value: "{{ states('input_select.load_switch_17') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_18
+          value: "{{ states('input_select.load_switch_18') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_19
+          value: "{{ states('input_select.load_switch_19') }}"
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.load_switch_20
+          value: "{{ states('input_select.load_switch_20') }}"
+
+      - service: system_log.write
+        data_template:
+          level: debug
+          logger: homeassistant.components.pc
+          message: "Script Configuration - Save - End of Saving"
