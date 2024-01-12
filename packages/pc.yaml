@@ -3,7 +3,7 @@
 #################################################################
 # Author: andbad                                                #
 # GitHub: https://github.com/andbad/HA_PowerControl             #
-# Version: 3.3                                                 #
+# Version: 3.42b                                                 #
 #################################################################
 ########################### CREDITS #############################
 # Thanks to the InDomus community for their help                #
@@ -46,8 +46,6 @@
 #################################################################
 ########################## SENSORS ##############################
 #################################################################
-sensor:
-
 # The most effective solution is to use a power sensor upstream of the system, just before the meter.
 # In that case just select the appropriate sensor in the configuration.
 # The following example uses a ShellyEM, in channel 1.
@@ -57,7 +55,7 @@ sensor:
 # value_template: "{{ value }}"
 # unit_of_measurement : "Watt"
 # icon: mdi:speedometer
-
+template:
 # Alternatively you can use the power sensors of the higher loads used and maintain a certain margin
 # tolerance.
 # This involves monitoring all major loads (oven, stove, hair dryer, air conditioners, etc ...).
@@ -65,11 +63,10 @@ sensor:
 # without load control intervening.
 # Using a conservative maximum power value (e.g. 3kW) and counting on the tolerances of 180 minutes up to 80%
 # (e.g. 3.6kW) is equally functional.
-  - platform: template
-    sensors:
-      virtual_power_load:
-        unit_of_measurement: 'W'
-        value_template: >
+  - sensor:
+    - name: virtual_power_load
+      unit_of_measurement: 'W'
+      state: >
           {{ states(states('input_text.power_load_1'))|int(default=0) +
              states(states('input_text.power_load_2'))|int(default=0) +
              states(states('input_text.power_load_3'))|int(default=0) +
@@ -93,11 +90,9 @@ sensor:
 
 # Sum of all "suspended" power, i.e. loads that were in operation with a given absorption but were
 # disabled.
-  - platform: template
-    sensors:
-      suspended_load:
-        unit_of_measurement: 'W'
-        value_template: >
+    - name: suspended_load
+      unit_of_measurement: 'W'
+      state: >
           {{ states('input_number.suspended_load_1')|int(default=0) + 
              states('input_number.suspended_load_2')|int(default=0) + 
              states('input_number.suspended_load_3')|int(default=0) + 
@@ -120,24 +115,18 @@ sensor:
              states('input_number.suspended_load_20')|int(default=0) }}
 
 # Shows the status of the selected sensor, useful for the graph.
-  - platform: template
-    sensors:
-      selected_power_load:
-        unit_of_measurement: 'W'
-        value_template: "{{ states(states('input_text.power_load')) |int(default=0) }}"
+    - name: selected_power_load
+      unit_of_measurement: 'W'
+      state: "{{ states(states('input_text.power_load')) |int(default=0) }}"
 
 # Maximum value that loads can reach before starting the detachment
-  - platform: template
-    sensors:
-      immediate_maximum_power:
-        unit_of_measurement: 'W'
-        value_template: "{{ states('input_number.immediate_maximum_power')|int(default=0) }}"
+    - name: immediate_maximum_power
+      unit_of_measurement: 'W'
+      state: "{{ states('input_number.immediate_maximum_power')|int(default=0) }}"
 
-  - platform: template
-    sensors:
-      delayed_maximum_power:
-        unit_of_measurement: 'W'
-        value_template: "{{ states('input_number.delayed_maximum_power')|int(default=0) }}"
+    - name: delayed_maximum_power
+      unit_of_measurement: 'W'
+      state: "{{ states('input_number.delayed_maximum_power')|int(default=0) }}"
         
 #################################################################
 ######################### INPUT_* ###############################
@@ -216,95 +205,95 @@ input_number:
   suspended_load_1:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_2:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_3:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_4:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_5:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_6:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_7:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_8:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_9:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_10:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_11:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_12:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_13:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_14:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_15:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_16:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_17:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_18:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_19:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   suspended_load_20:
     initial: 0
     min: 0
-    max: 10000
+    max: 15000
   
  # Slider for the configuration of the maximum usable power, exceeded this threshold the detachment is immediate
   immediate_maximum_power:
     min: 0
-    max: 9000
+    max: 26000
     step: 100
 
  # Slider for the configuration of the maximum usable power, exceeding this threshold the system will wait a few minutes
  # before acting.
   delayed_maximum_power:
     min: 0
-    max: 9000
+    max: 25000
     step: 100
 
  # Wait a few SECONDS between one detachment and the next.
@@ -521,34 +510,158 @@ input_select:
 automation:
 
 # When starting HA, update the input_slider with the list of entities for configuration fields.
-  - id: 'powercontrol_populate_entity_configuration'
-    alias: PowerControl - Populate Entities - Configuration
+# When HA starts, wait for the "Populate Entities" automation to finish, then load the switch configuration
+# and power sensors.
+  - id: 'powercontrol_load_config'
+    alias: PowerControl - Load - Config
+    mode: single
     trigger:
       - platform: homeassistant
         event: start
-      - platform: state
-        entity_id: input_boolean.selection_python_script
+#      - platform: state
+#        entity_id: input_boolean.selection_python_script
+        id: start
+      - platform: event
+        id: reload
+        event_type:
+          - automation_reloaded
+    action:
+      - service: system_log.write
+        data_template:
+          level: debug
+          logger: homeassistant.components.pc
+          message: "Configuration Automation - Load - Launch Configuration Script"
+      - choose:
+          - conditions:
+              - condition: trigger
+                id: start
+            sequence:
+              - service: script.turn_on
+                data: { }
+                entity_id: script.powercontrol_configurazione_popola_entita
+              - wait_template: "{{ state_attr('script.powercontrol_configurazione_popola_entita','current') == 0 }}"
+          - conditions:
+              - condition: trigger
+                id: reload
+            sequence:
+              - delay:
+                  minutes: 1
+              - service: script.turn_on
+                data: { }
+                entity_id: script.powercontrol_configurazione_popola_entita
+              - wait_template: "{{ state_attr('script.powercontrol_configurazione_popola_entita','current') == 0 }}"
+      - service: system_log.write
+        data_template:
+          level: debug
+          logger: homeassistant.components.pc
+          message: "Configuration Automation - Load - End Configuration Script"
+
+      # Automazione che si triggera nel momento in cui la la potenza utilizzata supera la potenza massima impostata.
+      # Agisce dopo TOT secondi dal superamento del limite, avvia lo script di distacco ed invia notifica di intervento.
+      # Ripete l'avvio dello script di distacco finché la potenza impegnata non rientra nel limite.
+      # Automation that is triggered when the power used exceeds the maximum power set.
+      # Acts after TOT seconds from exceeding the limit, starts the detachment script and sends intervention notification.
+      # Repeats the start of the detachment script until the committed power is within the limit.
+  - id: 'powercontrol_loads_stop'
+    alias: PowerControl - Loads Stop
+    mode: single
+    description: ''
+    trigger:
+    - platform: template
+      value_template: "{{ states(states('input_text.power_load')) |int(default=0) > states('sensor.immediate_maximum_power')|int(default=0) }}"
+      for:
+        seconds: "{{ states('input_number.immediate_stop_pace')|int(default=0) }}"
+      id: immediato
+    - platform: template
+      value_template: "{{ states(states('input_text.power_load')) |int(default=0) > states('sensor.delayed_maximum_power')|int(default=0) }}"
+      for:
+        minutes: "{{ states('input_number.delayed_stop_pace')|int(default=0) }}"
+      id: ritardato
+    condition:
+    - condition: state
+      entity_id: input_boolean.active_power_control
+      state: 'on'
     action:
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
-        message: "Configuration Automation - Populate entities - Start python scripts"
-        
+        message: "Load Automation Stop Triggered: Load Power ({{ states(states('input_text.power_load'))|int(default=0) }}))"
     - choose:
       - conditions:
-          - condition: state
-            entity_id: input_boolean.selection_python_script
-            state: 'off'
+#          - condition: state
+#            entity_id: input_boolean.selection_python_script
+#            state: 'off'
+          - condition: trigger
+            id: immediate
         sequence:
-          - service: python_script.update_entities
+#          - service: python_script.update_entities
+          - service: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.trigger_sensor
+          - service: system_log.write
+            data_template:
+              level: debug
+              logger: homeassistant.components.pc
+              message: "Load Automation Stop Triggered: Immediate Trigger Type"
       - conditions:
-          - condition: state
-            entity_id: input_boolean.selection_python_script
-            state: 'on'
+#          - condition: state
+#            entity_id: input_boolean.selection_python_script
+#            state: 'on'
+          - condition: trigger
+            id: delayed
         sequence:
-          - service: python_script.update_entities_new
-    
+#          - service: python_script.update_entities_new
+          - service: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.trigger_sensor
+          - service: system_log.write
+            data_template:
+              level: debug
+              logger: homeassistant.components.pc
+              message: "Load Automation Stop Triggered: Delayed Trigger Type"
+
+    - repeat:
+        sequence:
+          - service: system_log.write
+            data_template:
+              level: debug
+              logger: homeassistant.components.pc
+              message: "Started load stop script: load power {{ states(states('input_text.power_load'))|int(default=0)}}"
+          - service: script.turn_on
+            data: {}
+#            entity_id: script.stop_carichi_generale
+            entity_id: script.genaral_stop_load
+        until:
+          - condition: template
+            value_template: >
+              {{
+              ((states(states('input_text.power_load'))|int(default=0) > states('sensor.delayed_maximum_power')|int(default=0)) and states('input_boolean.trigger_sensor') == "off") or
+              ((states(states('input_text.power_load'))|int(default=0) > states('sensor.immediate_maximum_power')|int(default=0)) and states('input_boolean.trigger_sensor') == "on")
+              }}
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.trigger_sensor
+
+# Se per TOT minuti il limite di potenza è rispettato, avvia lo script di riattivazione dei carichi fino a che la potenza "sospesa" non è zero.
+# If the power limit is respected for TOT minutes, start the load reactivation script until the "suspended" power is zero.
+  - id: 'powercontrol_load_start'
+    alias: PowerControl - Load Start
+    description: ''
+    mode: single
+    trigger:
+    - platform: template
+      value_template: "{{ ((states(states('input_text.power_load'))|int(default=0) + states('sensor.suspended_loads')|int(default=0)) < states('sensor.delayed_maximum_power')|int(default=0)) and (states('sensor.suspended_loads')|int(default=0) > 0) }}"
+      for:
+        minutes: "{{ states('input_number.start_time')|int(default=0) }}"
+    condition:
+    - condition: state
+      entity_id: input_boolean.active_power_control
+      state: 'on'
+    - condition: template
+      value_template: "{{ states('sensor.suspended_loads')|int(default=0) > 0 }}"
+    action:
+
     - service: system_log.write
       data_template:
         level: debug
