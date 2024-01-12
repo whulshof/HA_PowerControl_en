@@ -4,6 +4,11 @@ all_switches = ["Selected"]
 for e in entities:
     all_switches.append(e)
 
+entities = hass.states.entity_ids('light')
+for e in entities:
+    all_switches.append(e)
+
+
 service_data = {'entity_id': 'input_select.load_switch_1', 'options': sorted(all_switches)}
 hass.services.call('input_select', 'set_options', service_data)
 service_data = {'entity_id': 'input_select.load_switch_2', 'options': sorted(all_switches)}
