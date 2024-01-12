@@ -1,12 +1,6 @@
   - title: PC
     path: pc
     icon: hass:car-cruise-control
-    visible:
-      - user: ceda43a363f749c6a3a37e8f17b0a732
-      - user: 65e63ca9e07c42d78df3c9b439466cc2
-      - user: 07caa89440ae4316b34983c6c1be7d59
-      - user: 73582ec97f774054afd57458a5f29188
-      - user: ffb67fb3750741e3b0cd57a420146d2e
     badges: []
     cards:
       - type: vertical-stack
@@ -34,6 +28,9 @@
               - entity: sensor.suspended_load
                 name: Waiting Power
                 icon: hass:power-plug-off
+              - entity: script.powercontrol_configuration_save
+                name: Save Configuration
+                icon: mdi:floppy
             state_color: true
             show_header_toggle: false
           - type: conditional
@@ -55,121 +52,121 @@
 
                 **Power**: {{states('input_text.power_load_1')}}
 
-                **Switch**: {{states('input_text.load_1_switch')}}
+                **Switch**: {{states('input_text.load_switch_1')}}
 
                 **Load 2**:
 
                 **Power**: {{states('input_text.power_load_2')}}
 
-                **Switch**: {{states('input_text.load_2_switch')}}
+                **Switch**: {{states('input_text.load_switch_2')}}
 
                 **Load 3**:
 
                 **Power**: {{states('input_text.power_load_3')}}
 
-                **Switch**: {{states('input_text.load_3_switch')}}
+                **Switch**: {{states('input_text.load_switch_3')}}
 
                 **Load 4**:
 
                 **Power**: {{states('input_text.power_load_4')}}
 
-                **Switch**: {{states('input_text.load_4_switch')}}
+                **Switch**: {{states('input_text.load_switch_4')}}
 
                 **Load 5**:
 
                 **Power**: {{states('input_text.power_load_5')}}
 
-                **Switch**: {{states('input_text.load_5_switch')}}
+                **Switch**: {{states('input_text.load_switch_5')}}
 
                 **Load 6**:
 
                 **Power**: {{states('input_text.power_load_6')}}
 
-                **Switch**: {{states('input_text.load_6_switch')}}
+                **Switch**: {{states('input_text.load_switch_6')}}
 
                 **Load 7**:
 
                 **Power**: {{states('input_text.power_load_7')}}
 
-                **Switch**: {{states('input_text.load_7_switch')}}
+                **Switch**: {{states('input_text.load_switch_7')}}
 
                 **Load 8**:
 
                 **Power**: {{states('input_text.power_load_8')}}
 
-                **Switch**: {{states('input_text.load_8_switch')}}
+                **Switch**: {{states('input_text.load_switch_8')}}
 
                 **Load 9**:
 
                 **Power**: {{states('input_text.power_load_9')}}
 
-                **Switch**: {{states('input_text.load_9_switch')}}
+                **Switch**: {{states('input_text.load_switch_9')}}
 
                 **Load 10**:
 
                 **Power**: {{states('input_text.power_load_10')}}
 
-                **Switch**: {{states('input_text.load_10_switch')}}
+                **Switch**: {{states('input_text.load_switch_10')}}
 
                 **Load 11**:
 
                 **Power**: {{states('input_text.power_load_11')}}
 
-                **Switch**: {{states('input_text.load_11_switch')}}
+                **Switch**: {{states('input_text.load_switch_11')}}
 
                 **Load 12**:
 
                 **Power**: {{states('input_text.power_load_12')}}
 
-                **Switch**: {{states('input_text.load_12_switch')}}
+                **Switch**: {{states('input_text.load_switch_12')}}
 
                 **Load 13**:
 
                 **Power**: {{states('input_text.power_load_13')}}
 
-                **Switch**: {{states('input_text.load_13_switch')}}
+                **Switch**: {{states('input_text.load_switch_13')}}
 
                 **Load 14**:
 
                 **Power**: {{states('input_text.power_load_14')}}
 
-                **Switch**: {{states('input_text.load_14_switch')}}
+                **Switch**: {{states('input_text.load_switch_14')}}
 
                 **Load 15**:
 
                 **Power**: {{states('input_text.power_load_15')}}
 
-                **Switch**: {{states('input_text.load_15_switch')}}
+                **Switch**: {{states('input_text.load_switch_15')}}
 
                 **Load 16**:
 
                 **Power**: {{states('input_text.power_load_16')}}
 
-                **Switch**: {{states('input_text.load_16_switch')}}
+                **Switch**: {{states('input_text.load_switch_16')}}
 
                 **Load 17**:
 
                 **Power**: {{states('input_text.power_load_17')}}
 
-                **Switch**: {{states('input_text.load_17_switch')}}
+                **Switch**: {{states('input_text.load_switch_17')}}
 
                 **Load 18**:
 
                 **Power**: {{states('input_text.power_load_18')}}
 
-                **Switch**: {{states('input_text.load_18_switch')}}
+                **Switch**: {{states('input_text.load_switch_18')}}
 
                 **Load 19**:
 
                 **Power**: {{states('input_text.power_load_19')}}
 
-                **Switch**: {{states('input_text.load_19_switch')}}
+                **Switch**: {{states('input_text.load_switch_19')}}
 
                 **Load 20**:
 
                 **Power**: {{states('input_text.power_load_20')}}
 
-                **Switch**: {{states('input_text.load_20_switch')}}
+                **Switch**: {{states('input_text.load_switch_20')}}
               title: Saved Configuration
       - type: conditional
         conditions:
@@ -180,6 +177,9 @@
           cards:
             - type: markdown
               content: >
+                **--> CLICK SAVE CONFIGURATION AFTER CONFIGURING THE PACKAGE <--**
+
+
                 **Power Load Sensors**
 
                 Select the global instantaneous consumption sensor. Unless
@@ -203,7 +203,8 @@
                 **Immediate Maximum Power**
 
                 If the total absorption exceeds this threshold, the system
-                wait a few SECONDS (see option below) then starts detaching loads. (suggested 3900)
+                wait a few SECONDS (see option below) then starts detaching loads.
+                (suggested 3900)
 
 
                 **Second immediate detachment**
@@ -222,17 +223,19 @@
 
                 Wait a few SECONDS between one detachment and another. (suggested 20)
 
+
                 **Minutes between Starts**
 
                 Wait a few MINUTES between one reactivation and another to give the
                 time to the load to resume its normal absorption. (suggested 5)
+
 
                 **New Selection Mode**
 
                 By enabling this option, the load entities will be filtered and only
                 those that begin with "sensor.power" and "switch.switch".
 
-              title: Configuration
+              title: Configurazione
             - type: entities
               entities:
                 - entity: input_select.power_loads
@@ -317,24 +320,24 @@
                 **starting from Load 1** up to Load 30.
             - type: entities
               entities:
-                - entity: input_select.load_1_switch
-                - entity: input_select.load_2_switch
-                - entity: input_select.load_3_switch
-                - entity: input_select.load_4_switch
-                - entity: input_select.load_5_switch
-                - entity: input_select.load_6_switch
-                - entity: input_select.load_7_switch
-                - entity: input_select.load_8_switch
-                - entity: input_select.load_9_switch
-                - entity: input_select.load_10_switch
-                - entity: input_select.load_11_switch
-                - entity: input_select.load_12_switch
-                - entity: input_select.load_13_switch
-                - entity: input_select.load_14_switch
-                - entity: input_select.load_15_switch
-                - entity: input_select.load_16_switch
-                - entity: input_select.load_17_switch
-                - entity: input_select.load_18_switch
-                - entity: input_select.load_19_switch
-                - entity: input_select.load_20_switch
+                - entity: input_select.load_switch_1
+                - entity: input_select.load_switch_2
+                - entity: input_select.load_switch_3
+                - entity: input_select.load_switch_4
+                - entity: input_select.load_switch_5
+                - entity: input_select.load_switch_6
+                - entity: input_select.load_switch_7
+                - entity: input_select.load_switch_8
+                - entity: input_select.load_switch_9
+                - entity: input_select.load_switch_10
+                - entity: input_select.load_switch_11
+                - entity: input_select.load_switch_12
+                - entity: input_select.load_switch_13
+                - entity: input_select.load_switch_14
+                - entity: input_select.load_switch_15
+                - entity: input_select.load_switch_16
+                - entity: input_select.load_switch_17
+                - entity: input_select.load_switch_18
+                - entity: input_select.load_switch_19
+                - entity: input_select.load_switch_20
               title: Load Switches
