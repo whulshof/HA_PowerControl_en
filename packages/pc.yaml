@@ -90,7 +90,7 @@ template:
 
 # Sum of all "suspended" power, i.e. loads that were in operation with a given absorption but were
 # disabled.
-    - name: suspended_load
+    - name: suspended_loads
       unit_of_measurement: 'W'
       state: >
           {{ states('input_number.suspended_load_1')|int(default=0) + 
@@ -535,7 +535,7 @@ automation:
                 id: start
             sequence:
               - service: script.turn_on
-                data: { }
+                data: {}
                 entity_id: script.powercontrol_populate_entity_configuration
               - wait_template: "{{ state_attr('script.powercontrol_populate_entity_configuration','current') == 0 }}"
           - conditions:
@@ -545,7 +545,7 @@ automation:
               - delay:
                   minutes: 1
               - service: script.turn_on
-                data: { }
+                data: {}
                 entity_id: script.powercontrol_populate_entity_configuration
               - wait_template: "{{ state_attr('script.powercontrol_populate_entity_configuration','current') == 0 }}"
       - service: system_log.write
@@ -557,7 +557,7 @@ automation:
       # Automation that is triggered when the power used exceeds the maximum power set.
       # Acts after TOT seconds from exceeding the limit, starts the detachment script and sends intervention notification.
       # Repeats the start of the detachment script until the committed power is within the limit.
-  - id: 'powercontrol_loads_stop'
+  - id: 'powercontrol_load_stop'
     alias: PowerControl - Loads Stop
     mode: single
     description: ''
@@ -566,12 +566,12 @@ automation:
       value_template: "{{ states(states('input_text.power_load')) |int(default=0) > states('sensor.immediate_maximum_power')|int(default=0) }}"
       for:
         seconds: "{{ states('input_number.immediate_stop_pace')|int(default=0) }}"
-      id: immediato
+      id: immediate
     - platform: template
       value_template: "{{ states(states('input_text.power_load')) |int(default=0) > states('sensor.delayed_maximum_power')|int(default=0) }}"
       for:
         minutes: "{{ states('input_number.delayed_stop_pace')|int(default=0) }}"
-      id: ritardato
+      id: delayed
     condition:
     - condition: state
       entity_id: input_boolean.active_power_control
