@@ -38,8 +38,8 @@
 #recorder:
 #  include:
 #    entities:
-#      - sensor.selected_loads
-#      - sensor.suspended_loads
+#      - sensor.selected_load
+#      - sensor.suspended_load
 #      - sensor.immediate_maximum_power
 #      - sensor.delayed_maximum_power
 
@@ -117,7 +117,7 @@ template:
 # Shows the status of the selected sensor, useful for the graph.
     - name: selected_power_load
       unit_of_measurement: 'W'
-      state: "{{ states(states('input_text.power_loads')) |int(default=0) }}"
+      state: "{{ states(states('input_text.power_load')) |int(default=0) }}"
 
 # Maximum value that loads can reach before starting the detachment
     - name: immediate_maximum_power
@@ -175,7 +175,7 @@ input_text:
   load_switch_19:
   load_switch_20:
 
-  power_loads:
+  power_load:
 
 input_boolean:
 # Switch for the graphical interface
@@ -335,7 +335,7 @@ input_select:
       - Select
       
 # Selection of the power sensor used. If not configured, the virtual sensor is used
-  power_loads:
+  power_load:
     name: Power load Sensor
     options:
       - Select
@@ -563,12 +563,12 @@ automation:
     description: ''
     trigger:
     - platform: template
-      value_template: "{{ states(states('input_text.power_loads')) |int(default=0) > states('sensor.immediate_maximum_power')|int(default=0) }}"
+      value_template: "{{ states(states('input_text.power_load')) |int(default=0) > states('sensor.immediate_maximum_power')|int(default=0) }}"
       for:
         seconds: "{{ states('input_number.immediate_stop_pace')|int(default=0) }}"
       id: immediato
     - platform: template
-      value_template: "{{ states(states('input_text.power_loads')) |int(default=0) > states('sensor.delayed_maximum_power')|int(default=0) }}"
+      value_template: "{{ states(states('input_text.power_load')) |int(default=0) > states('sensor.delayed_maximum_power')|int(default=0) }}"
       for:
         minutes: "{{ states('input_number.delayed_stop_pace')|int(default=0) }}"
       id: ritardato
@@ -581,7 +581,7 @@ automation:
       data_template:
         level: debug
         logger: homeassistant.components.pc
-        message: "Load Automation Stop Triggered: Load Power ({{ states(states('input_text.power_loads'))|int(default=0) }}))"
+        message: "Load Automation Stop Triggered: Load Power ({{ states(states('input_text.power_load'))|int(default=0) }}))"
     - choose:
       - conditions:
           - condition: trigger
@@ -614,7 +614,7 @@ automation:
             data_template:
               level: debug
               logger: homeassistant.components.pc
-              message: "Started load stop script: load power {{ states(states('input_text.power_loads'))|int(default=0)}}"
+              message: "Started load stop script: load power {{ states(states('input_text.power_load'))|int(default=0)}}"
           - service: script.turn_on
             data: {}
             entity_id: script.genaral_stop_load
@@ -622,8 +622,8 @@ automation:
           - condition: template
             value_template: >
               {{
-              ((states(states('input_text.power_loads'))|int(default=0) > states('sensor.delayed_maximum_power')|int(default=0)) and states('input_boolean.trigger_sensor') == "off") or
-              ((states(states('input_text.power_loads'))|int(default=0) > states('sensor.immediate_maximum_power')|int(default=0)) and states('input_boolean.trigger_sensor') == "on")
+              ((states(states('input_text.power_load'))|int(default=0) > states('sensor.delayed_maximum_power')|int(default=0)) and states('input_boolean.trigger_sensor') == "off") or
+              ((states(states('input_text.power_load'))|int(default=0) > states('sensor.immediate_maximum_power')|int(default=0)) and states('input_boolean.trigger_sensor') == "on")
               }}
     - service: input_boolean.turn_off
       target:
@@ -636,7 +636,7 @@ automation:
     mode: single
     trigger:
     - platform: template
-      value_template: "{{ ((states(states('input_text.power_loads'))|int(default=0) + states('sensor.suspended_loads')|int(default=0)) < states('sensor.delayed_maximum_power')|int(default=0)) and (states('sensor.suspended_loads')|int(default=0) > 0) }}"
+      value_template: "{{ ((states(states('input_text.power_load'))|int(default=0) + states('sensor.suspended_loads')|int(default=0)) < states('sensor.delayed_maximum_power')|int(default=0)) and (states('sensor.suspended_loads')|int(default=0) > 0) }}"
       for:
         minutes: "{{ states('input_number.start_time')|int(default=0) }}"
     condition:
@@ -1218,14 +1218,14 @@ script:
     - condition: template
       value_template: >
         {{
-        ((states(states('input_text.power_loads'))|int(default=0) > states('sensor.delayed_maximum_power')|int(default=0)) and states('input_boolean.trigger_sensor') == "off") or
-        ((states(states('input_text.power_loads'))|int(default=0) > states('sensor.immediate_maximum_power')|int(default=0)) and states('input_boolean.trigger_sensor') == "on") 
+        ((states(states('input_text.power_load'))|int(default=0) > states('sensor.delayed_maximum_power')|int(default=0)) and states('input_boolean.trigger_sensor') == "off") or
+        ((states(states('input_text.power_load'))|int(default=0) > states('sensor.immediate_maximum_power')|int(default=0)) and states('input_boolean.trigger_sensor') == "on") 
         }}
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
-        message: "Script Stop Load {{ state_attr(switch,'friendly_name') }} - Condition 3 - Ok {{ states(states('input_text.power_loads'))|int(default=0)}}W}}"
+        message: "Script Stop Load {{ state_attr(switch,'friendly_name') }} - Condition 3 - Ok {{ states(states('input_text.power_load'))|int(default=0)}}W}}"
     # Check if the load is currently in use
     - condition: template
       value_template: "{{ states(power) |int(default=0) > 10 }}"
@@ -1342,7 +1342,7 @@ script:
         message: "Script Start Load {{ state_attr(switch,'friendly_name') }} - Condition 3 ok"
     # We verify that the power in use is less than the maximum delayed power.
     - condition: template
-      value_template: "{{ states(states('input_text.power_loads'))|int(default=0) < states('sensor.delayed_maximum_power')|int(default=0)}}"
+      value_template: "{{ states(states('input_text.power_load'))|int(default=0) < states('sensor.delayed_maximum_power')|int(default=0)}}"
     - service: system_log.write
       data_template:
         level: debug
@@ -1350,7 +1350,7 @@ script:
         message: "Script Start Load {{ state_attr(switch,'friendly_name') }} - Condition 4 ok"
     # Check if, by reactivating the load, the power limit is not exceeded again.
     - condition: template
-      value_template: "{{ states(states('input_text.power_loads'))|int(default=0) + states(suspended)|int(default=0) < states('sensor.delayed_maximum_power')|int(default=0) }}"
+      value_template: "{{ states(states('input_text.power_load'))|int(default=0) + states(suspended)|int(default=0) < states('sensor.delayed_maximum_power')|int(default=0) }}"
     - service: system_log.write
       data_template:
         level: debug
@@ -1433,8 +1433,8 @@ script:
         message: "Script Configuration - Loads - Load input_select by its input_text"
     - service: input_select.select_option
       data:
-        entity_id: input_select.power_loads
-        option: "{{ states('input_text.power_loads') }}"
+        entity_id: input_select.power_load
+        option: "{{ states('input_text.power_load') }}"
     - service: input_select.select_option
       data:
         entity_id: input_select.power_load_1
@@ -1623,7 +1623,7 @@ script:
       - service: input_text.set_value
         data:
           entity_id: input_text.poer_loads
-          value: "{{ states('input_select.power_loads') }}"
+          value: "{{ states('input_select.power_load') }}"
 
       - service: input_text.set_value
         data:

@@ -45,7 +45,7 @@
 
 
                 **Power Detection Sensor**:
-                {{states('input_text.power_loads')}}
+                {{states('input_text.power_load')}}
 
 
                 **Load 1**:
@@ -238,7 +238,7 @@
               title: Configurazione
             - type: entities
               entities:
-                - entity: input_select.power_loads
+                - entity: input_select.power_load
                   icon: hass:chart-line
                 - entity: input_number.delayed_maximum_power
                   name: Delayed Maximum Power
