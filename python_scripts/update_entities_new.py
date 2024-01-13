@@ -45,9 +45,9 @@ service_data = {'entity_id': 'input_select.load_switch_20', 'options': sorted(al
 hass.services.call('input_select', 'set_options', service_data)
 
 entities = hass.states.entity_ids('sensor')
-all_sensor = ["Seleziona"]
+all_sensor = ["Selected"]
 for e in entities:
-   if e.startswith("sensor.potenza") : all_sensor.append(e)
+   if e.startswith("sensor.power") : all_sensor.append(e)
    
 service_data = {'entity_id': 'input_select.power_load_1', 'options': sorted(all_sensor)}
 hass.services.call('input_select', 'set_options', service_data)
@@ -90,5 +90,5 @@ hass.services.call('input_select', 'set_options', service_data)
 service_data = {'entity_id': 'input_select.power_load_20', 'options': sorted(all_sensor)}
 hass.services.call('input_select', 'set_options', service_data)
 
-service_data = {'entity_id': 'input_select.power_loads', 'options': sorted(all_sensor)}
+service_data = {'entity_id': 'input_select.power_load', 'options': sorted(all_sensor)}
 hass.services.call('input_select', 'set_options', service_data)
