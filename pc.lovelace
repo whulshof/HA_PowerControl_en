@@ -11,7 +11,7 @@
                 name: Maximum
               - entity: sensor.selected_power_load
                 name: In use
-              - entity: sensor.suspended_load
+              - entity: sensor.suspended_loads
                 name: Waiting
             refresh_interval: 0
             title: Power Graph
@@ -25,7 +25,7 @@
               - entity: sensor.selected_power_load
                 name: Used Power
                 icon: hass:power-plug
-              - entity: sensor.suspended_load
+              - entity: sensor.suspended_loads
                 name: Waiting Power
                 icon: hass:power-plug-off
               - entity: script.powercontrol_configuration_save
@@ -235,7 +235,7 @@
                 By enabling this option, the load entities will be filtered and only
                 those that begin with "sensor.power" and "switch.switch".
 
-              title: Configurazione
+              title: Configuration
             - type: entities
               entities:
                 - entity: input_select.power_load
