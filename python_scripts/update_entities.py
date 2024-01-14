@@ -1,6 +1,6 @@
 
 entities = hass.states.entity_ids('switch')
-all_switches = ["Selected"]
+all_switches = ["Select"]
 for e in entities:
     all_switches.append(e)
 
@@ -51,7 +51,7 @@ service_data = {'entity_id': 'input_select.load_switch_20', 'options': sorted(al
 hass.services.call('input_select', 'set_options', service_data)
 
 entities = hass.states.entity_ids('sensor')
-all_sensor = ["Selected"]
+all_sensor = ["Select"]
 for e in entities:
     all_sensor.append(e)
 
