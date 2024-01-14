@@ -39,7 +39,7 @@
 #  include:
 #    entities:
 #      - sensor.selected_load
-#      - sensor.suspended_load
+#      - sensor.suspended_loads
 #      - sensor.immediate_maximum_power
 #      - sensor.delayed_maximum_power
 
@@ -530,33 +530,33 @@ automation:
           logger: homeassistant.components.pc
           message: "Configuration Automation - Load - Launch Configuration Script"
       - choose:
-          - conditions:
-              - condition: trigger
-                id: start
-            sequence:
-              - service: script.turn_on
-                data: {}
-                entity_id: script.powercontrol_populate_entity_configuration
-              - wait_template: "{{ state_attr('script.powercontrol_populate_entity_configuration','current') == 0 }}"
-          - conditions:
-              - condition: trigger
-                id: reload
-            sequence:
-              - delay:
-                  minutes: 1
-              - service: script.turn_on
-                data: {}
-                entity_id: script.powercontrol_populate_entity_configuration
-              - wait_template: "{{ state_attr('script.powercontrol_populate_entity_configuration','current') == 0 }}"
+        - conditions:
+            - condition: trigger
+              id: start
+          sequence:
+            - service: script.turn_on
+              data: {}
+              entity_id: script.powercontrol_populate_entity_configuration
+            - wait_template: "{{ state_attr('script.powercontrol_populate_entity_configuration','current') == 0 }}"
+        - conditions:
+            - condition: trigger
+              id: reload
+          sequence:
+            - delay:
+                minutes: 1
+            - service: script.turn_on
+              data: {}
+              entity_id: script.powercontrol_populate_entity_configuration
+            - wait_template: "{{ state_attr('script.powercontrol_populate_entity_configuration','current') == 0 }}"
       - service: system_log.write
         data_template:
           level: debug
           logger: homeassistant.components.pc
           message: "Configuration Automation - Load - End Configuration Script"
 
-      # Automation that is triggered when the power used exceeds the maximum power set.
-      # Acts after TOT seconds from exceeding the limit, starts the detachment script and sends intervention notification.
-      # Repeats the start of the detachment script until the committed power is within the limit.
+# Automation that is triggered when the power used exceeds the maximum power set.
+# Acts after TOT seconds from exceeding the limit, starts the detachment script and sends intervention notification.
+# Repeats the start of the detachment script until the committed power is within the limit.
   - id: 'powercontrol_load_stop'
     alias: PowerControl - Loads Stop
     mode: single
@@ -650,7 +650,7 @@ automation:
       data_template:
         level: debug
         logger: homeassistant.components.pc
-        message: "Automazione start carichi triggerata: Potenza carichi+sospesa ({{ states(states('input_text.potenza_carichi'))|int(default=0) + states('sensor.potenza_carichi_sospesa')|int(default=0)}}) < Potenza massima ({{states('sensor.potenza_massima_ritardato')|int(default=0) }}) "
+        message: "Load start automation triggered: Load power+suspended ({{ states(states('input_text.power_load'))|int(default=0) + states('sensor.suspended_power_load')|int(default=0)}}) < Maximum power ({{states('sensor.delayed_maximum_power')|int(default=0) }}) "
     - repeat:
         until:
         - condition: template
@@ -672,8 +672,8 @@ automation:
     mode: single
 
     description: >-
-      Monitor load switches and, if one of them is active but its power
-       Suspended is different from 0, the door to zero.
+      Monitor load switches and, if one of them is active but its suspended power
+      is different from 0, the door to zero.
     trigger:
       - platform: template
         value_template: >
@@ -739,7 +739,7 @@ automation:
           logger: homeassistant.components.pc
           message: Automation Check Manual reactivation - End
 
-    
+
 #################################################################
 ######################### SCRIPT  ###############################
 #################################################################
@@ -757,200 +757,200 @@ script:
         logger: homeassistant.components.pc
         message: "Start script stop load 20"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_20')}}"
         switch: "{{states('input_text.load_switch_20')}}"
-        suspend: "input_number.suspended_load_20"
+        suspended: "input_number.suspended_load_20"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 19"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_19')}}"
         switch: "{{states('input_text.load_switch_19')}}"
-        suspend: "input_number.suspended_load_19"
+        suspended: "input_number.suspended_load_19"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 18"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_18')}}"
         switch: "{{states('input_text.load_switch_18')}}"
-        suspend: "input_number.suspended_load_18"
+        suspended: "input_number.suspended_load_18"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 17"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_17')}}"
         switch: "{{states('input_text.load_switch_17')}}"
-        suspend: "input_number.suspended_load_17"
+        suspended: "input_number.suspended_load_17"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 16"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_16')}}"
         switch: "{{states('input_text.load_switch_16')}}"
-        suspend: "input_number.suspended_load_16"
+        suspended: "input_number.suspended_load_16"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 15"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_15')}}"
         switch: "{{states('input_text.load_switch_15')}}"
-        suspend: "input_number.suspended_load_15"
+        suspended: "input_number.suspended_load_15"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 14"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_14')}}"
         switch: "{{states('input_text.load_switch_14')}}"
-        suspend: "input_number.suspended_load_14"
+        suspended: "input_number.suspended_load_14"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 13"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_13')}}"
         switch: "{{states('input_text.load_switch_13')}}"
-        suspend: "input_number.suspended_load_13"
+        suspended: "input_number.suspended_load_13"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 12"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_12')}}"
         switch: "{{states('input_text.load_switch_12')}}"
-        suspend: "input_number.suspended_load_12"
+        suspended: "input_number.suspended_load_12"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 11"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_11')}}"
         switch: "{{states('input_text.load_switch_11')}}"
-        suspend: "input_number.suspended_load_11"
+        suspended: "input_number.suspended_load_11"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 10"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_10')}}"
         switch: "{{states('input_text.load_switch_10')}}"
-        suspend: "input_number.suspended_load_10"
+        suspended: "input_number.suspended_load_10"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 9"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_9')}}"
         switch: "{{states('input_text.load_switch_9')}}"
-        suspend: "input_number.suspended_load_9"
+        suspended: "input_number.suspended_load_9"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 8"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_8')}}"
         switch: "{{states('input_text.load_switch_8')}}"
-        suspend: "input_number.suspended_load_8"
+        suspended: "input_number.suspended_load_8"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 7"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_7')}}"
         switch: "{{states('input_text.load_switch_7')}}"
-        suspend: "input_number.suspended_load_7"
+        suspended: "input_number.suspended_load_7"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 6"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_6')}}"
         switch: "{{states('input_text.load_switch_6')}}"
-        suspend: "input_number.suspended_load_6"
+        suspended: "input_number.suspended_load_6"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 5"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_5')}}"
         switch: "{{states('input_text.load_switch_5')}}"
-        suspend: "input_number.suspended_load_5"
+        suspended: "input_number.suspended_load_5"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 4"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_4')}}"
         switch: "{{states('input_text.load_switch_4')}}"
-        suspend: "input_number.suspended_load_4"
+        suspended: "input_number.suspended_load_4"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 3"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_3')}}"
         switch: "{{states('input_text.load_switch_3')}}"
-        suspend: "input_number.suspended_load_3"
+        suspended: "input_number.suspended_load_3"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 2"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_2')}}"
         switch: "{{states('input_text.load_switch_2')}}"
-        suspend: "input_number.suspended_load_2"
+        suspended: "input_number.suspended_load_2"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script stop load 1"
     - service: script.stop_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_1')}}"
         switch: "{{states('input_text.load_switch_1')}}"
-        suspend: "input_number.suspended_load_1"
+        suspended: "input_number.suspended_load_1"
     mode: single
 
 # Loads are reactivated in numerical order (from higher priority to lowest priority)
@@ -964,200 +964,200 @@ script:
         logger: homeassistant.components.pc
         message: "Start script start load 1"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_1')}}"
         switch: "{{states('input_text.load_switch_1')}}"
-        suspend: "input_number.suspended_load_1"
+        suspended: "input_number.suspended_load_1"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 2"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_2')}}"
         switch: "{{states('input_text.load_switch_2')}}"
-        suspend: "input_number.suspended_load_2"
+        suspended: "input_number.suspended_load_2"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 3"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_3')}}"
         switch: "{{states('input_text.load_switch_3')}}"
-        suspend: "input_number.suspended_load_3"
+        suspended: "input_number.suspended_load_3"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 4"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_4')}}"
         switch: "{{states('input_text.load_switch_4')}}"
-        suspend: "input_number.suspended_load_4"
+        suspended: "input_number.suspended_load_4"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 5"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_5')}}"
         switch: "{{states('input_text.load_switch_5')}}"
-        suspend: "input_number.suspended_load_5"
+        suspended: "input_number.suspended_load_5"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 6"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_6')}}"
         switch: "{{states('input_text.load_switch_6')}}"
-        suspend: "input_number.suspended_load_6"
+        suspended: "input_number.suspended_load_6"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 7"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_7')}}"
         switch: "{{states('input_text.load_switch_7')}}"
-        suspend: "input_number.suspended_load_7"
+        suspended: "input_number.suspended_load_7"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 8"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_8')}}"
         switch: "{{states('input_text.load_switch_8')}}"
-        suspend: "input_number.suspended_load_8"
+        suspended: "input_number.suspended_load_8"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 9"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_9')}}"
         switch: "{{states('input_text.load_switch_9')}}"
-        suspend: "input_number.suspended_load_9"
+        suspended: "input_number.suspended_load_9"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 10"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_10')}}"
         switch: "{{states('input_text.load_switch_10')}}"
-        suspend: "input_number.suspended_load_10"
+        suspended: "input_number.suspended_load_10"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 11"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_11')}}"
         switch: "{{states('input_text.load_switch_11')}}"
-        suspend: "input_number.suspended_load_11"
+        suspended: "input_number.suspended_load_11"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 12"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_12')}}"
         switch: "{{states('input_text.load_switch_12')}}"
-        suspend: "input_number.suspended_load_12"
+        suspended: "input_number.suspended_load_12"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 13"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_13')}}"
         switch: "{{states('input_text.load_switch_13')}}"
-        suspend: "input_number.suspended_load_13"
+        suspended: "input_number.suspended_load_13"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 14"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_14')}}"
         switch: "{{states('input_text.load_switch_14')}}"
-        suspend: "input_number.suspended_load_14"
+        suspended: "input_number.suspended_load_14"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 15"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_15')}}"
         switch: "{{states('input_text.load_switch_15')}}"
-        suspend: "input_number.suspended_load_15"
+        suspended: "input_number.suspended_load_15"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 16"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_16')}}"
         switch: "{{states('input_text.load_switch_16')}}"
-        suspend: "input_number.suspended_load_16"
+        suspended: "input_number.suspended_load_16"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 17"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_17')}}"
         switch: "{{states('input_text.load_switch_17')}}"
-        suspend: "input_number.suspended_load_17"
+        suspended: "input_number.suspended_load_17"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 18"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_18')}}"
         switch: "{{states('input_text.load_switch_18')}}"
-        suspend: "input_number.suspended_load_18"
+        suspended: "input_number.suspended_load_18"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 19"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_19')}}"
         switch: "{{states('input_text.load_switch_19')}}"
-        suspend: "input_number.suspended_load_19"
+        suspended: "input_number.suspended_load_19"
     - service: system_log.write
       data_template:
         level: debug
         logger: homeassistant.components.pc
         message: "Start script start load 20"
     - service: script.start_single_load
-      data_template: 
+      data_template:
         power: "{{states('input_text.power_load_20')}}"
         switch: "{{states('input_text.load_switch_20')}}"
-        sospesa: "input_number.suspended_load_20"
+        suspended: "input_number.suspended_load_20"
     mode: single
 
 #################################################################
@@ -1180,7 +1180,7 @@ script:
         message: "Script Stop Load {{ state_attr(switch,'friendly_name') }} - Start"
     # Check if the load power sensor is set
     - condition: template
-      value_template: "{{ power != 'Selected' }}"
+      value_template: "{{ power != 'Select' }}"
     - service: system_log.write
       data_template:
         level: debug
@@ -1198,7 +1198,7 @@ script:
         
     # Check if the load switch is set
     - condition: template
-      value_template: "{{ switch != 'Selected' }}"
+      value_template: "{{ switch != 'Select' }}"
     - service: system_log.write
       data_template:
         level: debug
@@ -1298,7 +1298,7 @@ script:
         message: "Script Start Load {{ state_attr(switch,'friendly_name') }} - Start"
     # Check if the load power sensor has been configured
     - condition: template
-      value_template: "{{ power != 'Selected' }}"
+      value_template: "{{ power != 'Select' }}"
     - service: system_log.write
       data_template:
         level: debug
@@ -1316,7 +1316,7 @@ script:
         
     # Check if the load switch has been configured
     - condition: template
-      value_template: "{{ switch != 'Selected' }}"
+      value_template: "{{ switch != 'Select' }}"
     - service: system_log.write
       data_template:
         level: debug
@@ -1622,7 +1622,7 @@ script:
           message: "Script Configurazione - Save - Save input_select in input_text"
       - service: input_text.set_value
         data:
-          entity_id: input_text.poer_loads
+          entity_id: input_text.power_load
           value: "{{ states('input_select.power_load') }}"
 
       - service: input_text.set_value

@@ -31,7 +31,7 @@ Set the configuration parameters of the Lovelace graphical interface.
 
 # Power Load Sensor
 The most effective solution is to use a power sensor upstream of the system, just before the meter. In this case, simply select the appropriate sensor in the configuration.
-Alternatively, it is possible to use the power sensors of the increased loads used (sensor.potenza_carichi_virtuale) and maintain a certain margin of tolerance.
+Alternatively, it is possible to use the power sensors of the increased loads used (sensor.virtual_power_load) and maintain a certain margin of tolerance.
 This involves monitoring all major loads (oven, stove, hair dryer, air conditioners, etc ...).
 Of course, in this way the overall consumption cannot be assessed, so the limit value could be exceeded without load control intervening.
 But using a conservative maximum power value (e.g. 3kW) and counting on the tolerances of 180 minutes up to 33% (e.g. 4kW) should be functional.
