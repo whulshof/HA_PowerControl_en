@@ -1,3 +1,4 @@
+## NB, currently the translated software is not running!!! Still investigating.
 # HA_PowerControl
 
 The following package, combined with the python script "update_entities.py" aims to avoid the detachment of the meter due to too much power absorbed by the various appliances (loads).
