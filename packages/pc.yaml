@@ -55,6 +55,7 @@
 # value_template: "{{ value }}"
 # unit_of_measurement : "Watt"
 # icon: mdi:speedometer
+
 template:
 # Alternatively you can use the power sensors of the higher loads used and maintain a certain margin
 # tolerance.
@@ -286,14 +287,14 @@ input_number:
  # Slider for the configuration of the maximum usable power, exceeded this threshold the detachment is immediate
   immediate_maximum_power:
     min: 0
-    max: 26000
+    max: 30000
     step: 100
 
  # Slider for the configuration of the maximum usable power, exceeding this threshold the system will wait a few minutes
  # before acting.
   delayed_maximum_power:
     min: 0
-    max: 25000
+    max: 30000
     step: 100
 
  # Wait a few SECONDS between one detachment and the next.
@@ -617,7 +618,7 @@ automation:
               message: "Started load stop script: load power {{ states(states('input_text.power_load'))|int(default=0)}}"
           - service: script.turn_on
             data: {}
-            entity_id: script.genaral_stop_load
+            entity_id: script.general_stop_loads
         until:
           - condition: template
             value_template: >
@@ -650,7 +651,7 @@ automation:
       data_template:
         level: debug
         logger: homeassistant.components.pc
-        message: "Load start automation triggered: Load power+suspended ({{ states(states('input_text.power_load'))|int(default=0) + states('sensor.suspended_power_load')|int(default=0)}}) < Maximum power ({{states('sensor.delayed_maximum_power')|int(default=0) }}) "
+        message: "Load start automation triggered: Load power+suspended ({{ states(states('input_text.power_load'))|int(default=0) + states('sensor.suspended_loads')|int(default=0)}}) < Maximum power ({{states('sensor.delayed_maximum_power')|int(default=0) }}) "
     - repeat:
         until:
         - condition: template
@@ -748,7 +749,7 @@ script:
 
 # Loads are deactivated in reverse numerical order (lowest priority to highest).
 # Wait for one script to be completely completed before moving on to the next.
-  stop_loads_general:
+  general_stop_loads:
     alias: PowerControl - Stop Loads General
     sequence:
     - service: system_log.write
@@ -1186,7 +1187,7 @@ script:
         level: debug
         logger: homeassistant.components.pc
         message: "Script Stop Load {{ state_attr(switch,'friendly_name') }} - Condition 1 - Ok"
-        
+
     # Check if the load power sensor is available
     - condition: template
       value_template: "{{ states(power) != 'unavailable' }}"
@@ -1195,7 +1196,7 @@ script:
         level: debug
         logger: homeassistant.components.pc
         message: "Script Stop Load {{ state_attr(switch,'friendly_name') }} - Condition 1.5 - Ok"
-        
+
     # Check if the load switch is set
     - condition: template
       value_template: "{{ switch != 'Select' }}"
@@ -1243,7 +1244,7 @@ script:
       data_template:
         level: debug
         logger: homeassistant.components.pc
-        message: "Script Stop Load {{ state_attr(switch,'friendly_name') }} - Shifted load power {{ states(power) }} suspended {{states(suspended)|int(default=0)}} (should be the same)."
+        message: "Script Stop Load {{ state_attr(switch,'friendly_name') }} - Shifted load power {{ states(power) }} vs suspended {{states(suspended)|int(default=0)}} (should be the same)."
     # I turn off the load
     - service_template: switch.turn_off
       data_template:
@@ -1254,7 +1255,7 @@ script:
         logger: homeassistant.components.pc
         message: "Script Stop Load {{ state_attr(switch,'friendly_name') }} - Load Off"
     # Send Notification
-    - service: notify.tutti
+    - service: notify.all
       data:
         title: Power Limit Exceeded
         message: "{{ state_attr(switch,'friendly_name') }} deactivated."
@@ -1424,7 +1425,7 @@ script:
       data_template:
         level: debug
         logger: homeassistant.components.pc
-        message: "Script Configuration - Populate entities - Finished python scripts"
+        message: "Script Configuration - Populate entities - Finished python script"
 
     - service: system_log.write
       data_template:
