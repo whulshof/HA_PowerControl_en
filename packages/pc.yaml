@@ -115,7 +115,7 @@ template:
              states('input_number.suspended_load_20')|int(default=0) }}
 
 # Shows the status of the selected sensor, useful for the graph.
-    - name: selected_power_load
+    - name: selected_power_loads
       unit_of_measurement: 'W'
       state: "{{ states(states('input_text.power_load')) |int(default=0) }}"
 

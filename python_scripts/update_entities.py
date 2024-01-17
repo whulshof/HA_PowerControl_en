@@ -96,5 +96,5 @@ hass.services.call('input_select', 'set_options', service_data)
 service_data = {'entity_id': 'input_select.power_load_20', 'options': sorted(all_sensor)}
 hass.services.call('input_select', 'set_options', service_data)
 
-service_data = {'entity_id': 'input_select.power_loads', 'options': sorted(all_sensor)}
+service_data = {'entity_id': 'input_select.power_load', 'options': sorted(all_sensor)}
 hass.services.call('input_select', 'set_options', service_data)

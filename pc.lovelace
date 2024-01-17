@@ -9,7 +9,7 @@
             entities:
               - entity: sensor.delayed_maximum_power
                 name: Maximum
-              - entity: sensor.selected_power_load
+              - entity: sensor.selected_power_loads
                 name: In use
               - entity: sensor.suspended_loads
                 name: Waiting
@@ -22,7 +22,7 @@
                 icon: hass:car-cruise-control
               - entity: input_boolean.power_control_settings
                 icon: hass:car-cruise-control
-              - entity: sensor.selected_power_load
+              - entity: sensor.selected_power_loads
                 name: Used Power
                 icon: hass:power-plug
               - entity: sensor.suspended_loads
