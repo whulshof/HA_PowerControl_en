@@ -1,0 +1,224 @@
+  - title: PC
+    path: pc
+    icon: hass:car-cruise-control
+    badges: []
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: history-graph
+            entities:
+              - entity: sensor.delayed_maximum_power
+                name: Maximum
+              - entity: sensor.selected_power_loads
+                name: In use
+              - entity: sensor.suspended_loads
+                name: Waiting
+            refresh_interval: 0
+            title: Power Graph
+            hours_to_show: 2
+          - type: entities
+            entities:
+              - entity: input_boolean.active_power_control
+                icon: hass:car-cruise-control
+              - entity: input_boolean.power_control_settings
+                icon: hass:car-cruise-control
+              - entity: sensor.selected_power_loads
+                name: Used Power
+                icon: hass:power-plug
+              - entity: sensor.suspended_loads
+                name: Waiting Power
+                icon: hass:power-plug-off
+              - entity: script.powercontrol_configuration_save
+                name: Save Configuration
+                icon: mdi:floppy
+            state_color: true
+            show_header_toggle: false
+          - type: conditional
+            conditions:
+              - entity: input_boolean.power_control_settings
+                state: 'on'
+            card:
+              type: markdown
+              content: >
+                This is the configuration currently used, editable
+                via the following drop-down menus.
+
+
+                **Power Detection Sensor**:
+                {{states('input_text.power_load')}}
+
+
+                **Load 1**:
+
+                **Power**: {{states('input_text.power_load_1')}}
+
+                **Switch**: {{states('input_text.load_switch_1')}}
+
+                **Load 2**:
+
+                **Power**: {{states('input_text.power_load_2')}}
+
+                **Switch**: {{states('input_text.load_switch_2')}}
+
+                **Load 3**:
+
+                **Power**: {{states('input_text.power_load_3')}}
+
+                **Switch**: {{states('input_text.load_switch_3')}}
+
+                **Load 4**:
+
+                **Power**: {{states('input_text.power_load_4')}}
+
+                **Switch**: {{states('input_text.load_switch_4')}}
+
+                **Load 5**:
+
+                **Power**: {{states('input_text.power_load_5')}}
+
+                **Switch**: {{states('input_text.load_switch_5')}}
+
+              title: Saved Configuration
+      - type: conditional
+        conditions:
+          - entity: input_boolean.power_control_settings
+            state: 'on'
+        card:
+          type: vertical-stack
+          cards:
+            - type: markdown
+              content: >
+                **--> CLICK SAVE CONFIGURATION AFTER CONFIGURING THE PACKAGE <--**
+
+
+                **Power Load Sensors**
+
+                Select the global instantaneous consumption sensor. Unless
+                available, you can select the sensor
+                "sensor.virtual_power_load" which is the sum of the power
+                used by loads entered in the fields below.
+
+
+                **Delayed Maximum Power**
+
+                If the total absorption exceeds this threshold, the system wait a few MINUTES
+                (see option below) then start Detach loads. (suggested 3200)
+
+
+                **Delayed posting minutes**
+
+                After so many MINUTES of exceeding the maximum DELAYED power,
+                The detachment begins. (suggested 170)
+
+
+                **Immediate Maximum Power**
+
+                If the total absorption exceeds this threshold, the system
+                wait a few SECONDS (see option below) then starts detaching loads.
+                (suggested 3900)
+
+
+                **Second immediate detachment**
+
+                After so many SECONDS of exceeding the maximum IMMEDIATE power,
+                detaching begins. (suggested 10)
+
+
+                **Reactivation minutes**
+
+                After so many MINUTES that the power used has returned to the limits,
+                start reactivating loads. (suggested 5)
+
+
+                **Seconds between Stops**
+
+                Wait a few SECONDS between one detachment and another. (suggested 20)
+
+
+                **Minutes between Starts**
+
+                Wait a few MINUTES between one reactivation and another to give the
+                time to the load to resume its normal absorption. (suggested 5)
+
+
+                **New Selection Mode**
+
+                By enabling this option, the load entities will be filtered and only
+                those that begin with "sensor.power" and "switch.switch".
+
+              title: Configuration
+            - type: entities
+              entities:
+                - entity: input_select.power_load
+                  icon: hass:chart-line
+                - entity: input_number.delayed_maximum_power
+                  name: Delayed Maximum Power
+                  icon: hass:chart-bell-curve
+                - entity: input_number.delayed_stop_pace
+                  name: Delayed posting minutes
+                  icon: hass:camera-timer
+                - entity: input_number.immediate_maximum_power
+                  name: Immediate Maximum Power
+                  icon: hass:chart-bell-curve
+                - entity: input_number.immediate_stop_pace
+                  name: Second immediate detachment
+                  icon: hass:camera-timer
+                - entity: input_number.restart_delay
+                  name: Reactivation minutes
+                  icon: hass:camera-timer
+                - entity: input_number.pause_between_detachments
+                  name: Seconds between stops
+                  icon: hass:camera-timer
+                - entity: input_number.pause_between_reactivations
+                  name: Minutes between starts
+                  icon: hass:camera-timer
+                - entity: input_boolean.selection_python_script
+                  name: New option selection mode
+              state_color: true
+              show_header_toggle: false
+      - type: conditional
+        conditions:
+          - entity: input_boolean.power_control_settings
+            state: 'on'
+        card:
+          type: vertical-stack
+          cards:
+            - type: markdown
+              content: >-
+                **Load Sensor**
+
+                Select the power sensors (W) of the loads to be monitored,
+                and to be disconnected in case of excessive demand.
+            - type: entities
+              entities:
+                - entity: input_select.power_load_1
+                - entity: input_select.power_load_2
+                - entity: input_select.power_load_3
+                - entity: input_select.power_load_4
+                - entity: input_select.power_load_5
+              title: Power Load Sensors
+      - type: conditional
+        conditions:
+          - entity: input_boolean.power_control_settings
+            state: 'on'
+        card:
+          type: vertical-stack
+          cards:
+            - type: markdown
+              content: >-
+                **Load Switches**
+
+                Select the monitored load switches in the Sensor fee.
+                Loads will be disconnected in order reverse priority,
+                **from Load 20** to Load 1, only if the power they are in use.
+                After the request for power is within limits,
+                previously disconnected loads, will be progressively reconnected
+                **starting from Load 1** up to Load 30.
+            - type: entities
+              entities:
+                - entity: input_select.load_switch_1
+                - entity: input_select.load_switch_2
+                - entity: input_select.load_switch_3
+                - entity: input_select.load_switch_4
+                - entity: input_select.load_switch_5
+              title: Load Switches
