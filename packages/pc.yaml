@@ -38,7 +38,7 @@
 #recorder:
 #  include:
 #    entities:
-#      - sensor.selected_load
+#      - sensor.selected_power_loads
 #      - sensor.suspended_loads
 #      - sensor.immediate_maximum_power
 #      - sensor.delayed_maximum_power
@@ -322,7 +322,7 @@ input_number:
     step: 1  
 
   # Wait a few MINUTES between one reactivation and another to give time to the load to resume its normal absorption
-  pause_between_reactivations:
+  pause_between_restarts:
     min: 0
     max: 60
     step: 1  
@@ -334,7 +334,7 @@ input_select:
     name: Power load List
     options:
       - Select
-      
+
 # Selection of the power sensor used. If not configured, the virtual sensor is used
   power_load:
     name: Power load Sensor
@@ -1388,9 +1388,9 @@ script:
       data_template:
         level: debug
         logger: homeassistant.components.pc
-        message: "Script Start Load {{ state_attr(switch,'friendly_name') }} - Sent notification. We expect {{ states('input_number.restart_delay') }} minutes"
+        message: "Script Start Load {{ state_attr(switch,'friendly_name') }} - Sent notification. We expect {{ states('input_number.pause_between_restarts') }} minutes"
     - delay:
-        minutes: "{{ states('input_number.restart_delay') }}"
+        minutes: "{{ states('input_number.pause_between_restarts') }}"
     mode: queued
 
 

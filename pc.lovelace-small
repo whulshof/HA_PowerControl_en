@@ -169,7 +169,7 @@
                 - entity: input_number.pause_between_detachments
                   name: Seconds between stops
                   icon: hass:camera-timer
-                - entity: input_number.pause_between_reactivations
+                - entity: input_number.pause_between_restarts
                   name: Minutes between starts
                   icon: hass:camera-timer
                 - entity: input_boolean.python_script_selection
