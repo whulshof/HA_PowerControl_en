@@ -261,7 +261,7 @@
                 - entity: input_number.pause_between_reactivations
                   name: Minutes between starts
                   icon: hass:camera-timer
-                - entity: input_boolean.selection_python_script
+                - entity: input_boolean.python_script_selection
                   name: New option selection mode
               state_color: true
               show_header_toggle: false

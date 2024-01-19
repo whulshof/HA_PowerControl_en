@@ -26,7 +26,7 @@
 # The detachment occurs after a few seconds (also in this case adjusted by its slider).
 # The script keeps memory of load absorption before detachment and reconnects it only when availability
 # of power is sufficient not to cause a new detachment.
-# The configuration is entirely via lovelace interface, except the notification group (notify.tutti) which must be set
+# The configuration is entirely via lovelace interface, except the notification group (notify.all) which must be set
 # manually.
 
 #################################################################
@@ -537,8 +537,8 @@ automation:
           sequence:
             - service: script.turn_on
               data: {}
-              entity_id: script.powercontrol_populate_entity_configuration
-            - wait_template: "{{ state_attr('script.powercontrol_populate_entity_configuration','current') == 0 }}"
+              entity_id: script.powercontrol_populate_entities_configuration
+            - wait_template: "{{ state_attr('script.powercontrol_populate_entities_configuration','current') == 0 }}"
         - conditions:
             - condition: trigger
               id: reload
@@ -547,8 +547,8 @@ automation:
                 minutes: 1
             - service: script.turn_on
               data: {}
-              entity_id: script.powercontrol_populate_entity_configuration
-            - wait_template: "{{ state_attr('script.powercontrol_populate_entity_configuration','current') == 0 }}"
+              entity_id: script.powercontrol_populate_entities_configuration
+            - wait_template: "{{ state_attr('script.powercontrol_populate_entities_configuration','current') == 0 }}"
       - service: system_log.write
         data_template:
           level: debug
@@ -1377,7 +1377,7 @@ script:
         logger: homeassistant.components.pc
         message: "Script Start Load {{ state_attr(switch,'friendly_name') }} - Switch activated"
     # Send notification
-    - service: notify.tutti
+    - service: notify.all
       data:
         title: Recessed power limit
         message: "{{ state_attr(switch,'friendly_name') }} Reactivated"
@@ -1400,7 +1400,7 @@ script:
 #################################################################
 
 # When HA starts, update the input_slider with the list of entities for the configuration fields.
-  powercontrol_configuration_populate_entities:
+  powercontrol_populate_entities_configuration:
     alias: PowerControl - Configuration - Populate entities
     sequence:
     - service: system_log.write
@@ -1613,8 +1613,8 @@ script:
         data_template:
           level: debug
           logger: homeassistant.components.pc
-          message: "Script Configuration - Save - Start automation, wait for automation to finish powercontrol_load_configuration"
-      - wait_template: "{{ state_attr('automation.powercontrol_load_configuration','current') == 0 }}"
+          message: "Script Configuration - Save - Start automation, wait for automation to finish powercontrol_load_config"
+      - wait_template: "{{ state_attr('automation.powercontrol_load_config','current') == 0 }}"
       - service: system_log.write
 
         data_template:

@@ -11,7 +11,7 @@ The logic envisages the configuration of two maximum power thresholds and two in
 
 The disconnection of the loads that are absorbing energy starts from those with lower priority (Load 20) up to those with higher priority (Load 1), until the overall use of power is within the set limit. If a load is not absorbing, it is not detached.
 The script keeps memory of the load absorption before the detachment and reconnects it only when the availability of power is sufficient not to cause a new detachment, in reverse priority order (from Load 1 to Load 20).
-The configuration is entirely via graphical interface, except for the notification group (notify.tutti) which must be set manually.
+The configuration is entirely via graphical interface, except for the notification group (notify.all) which must be set manually.
 
 # Installing
 
@@ -21,7 +21,7 @@ The configuration is entirely via graphical interface, except for the notificati
 - [Enable packages](https://www.home-assistant.io/docs/configuration/packages/)
 - [Enable python scripts](https://www.home-assistant.io/integrations/python_script/)
 - Add the contents of the file "pc.lovelace" to the Lovelace interface.
-- Create a notification group "notify.tutti" in the file "configuration.yaml" and insert the devices that will receive the intervention notifications.
+- Create a notification group "notify.all" in the file "configuration.yaml" and insert the devices that will receive the intervention notifications.
 - [Configure the recoder](https://www.home-assistant.io/integrations/recorder/) to include the following sensors:
   - sensor.selected_power_loads
   - sensor.suspended_power_loads
